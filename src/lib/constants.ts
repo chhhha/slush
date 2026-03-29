@@ -13,10 +13,10 @@ export const STATUS_COLORS: Record<
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
   },
   cooling: {
-    bg: "bg-blue-50 dark:bg-blue-950",
+    bg: "bg-blue-50 dark:bg-sky-950",
     text: "text-blue-700 dark:text-blue-300",
     border: "border-blue-300 dark:border-blue-700",
-    badge: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+    badge: "bg-blue-100 text-blue-800 dark:bg-sky-900 dark:text-blue-200",
   },
   available: {
     bg: "bg-green-50 dark:bg-green-950",
@@ -26,10 +26,10 @@ export const STATUS_COLORS: Record<
       "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
   },
   sold_out: {
-    bg: "bg-slate-50 dark:bg-slate-800",
+    bg: "bg-slate-50 dark:bg-slate-950",
     text: "text-slate-700 dark:text-slate-300",
-    border: "border-slate-300 dark:border-slate-600",
-    badge: "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200",
+    border: "border-slate-300 dark:border-slate-700",
+    badge: "bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-200",
   },
   broken: {
     bg: "bg-red-50 dark:bg-red-950",
