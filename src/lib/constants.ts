@@ -26,7 +26,7 @@ export const STATUS_COLORS: Record<
       "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
   },
   sold_out: {
-    bg: "bg-slate-50 dark:bg-slate-950",
+    bg: "bg-slate-50 dark:bg-slate-900",
     text: "text-slate-700 dark:text-slate-300",
     border: "border-slate-300 dark:border-slate-700",
     badge: "bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-200",
