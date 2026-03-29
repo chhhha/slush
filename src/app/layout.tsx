@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "슬러시 현황판",
+  title: "오늘의 슬러시",
   description: "슬러시 기계 실시간 상태 현황판",
 };
 
