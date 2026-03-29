@@ -160,7 +160,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
                 <p className="font-semibold">DA사업부 S/W개발그룹</p>
                 <p>슬러시 이벤트 현황 페이지예요! 🍧</p>
                 <p className="text-muted-foreground">
-                  이 페이지는 AI를 활용하여 개발했어요.
+                  이 페이지는 100% AI가 개발했어요.
                 </p>
                 <div className="border-t pt-2 text-xs text-muted-foreground">
                   <p>개발: 차재훈</p>
