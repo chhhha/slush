@@ -163,7 +163,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
                   이 페이지는 100% AI가 개발했어요.
                 </p>
                 <div className="border-t pt-2 text-xs text-muted-foreground">
-                  <p>개발: 차재훈</p>
+                  <p>담당: 차재훈</p>
                   <a
                     href="mailto:jh8948.cha@samsung.com"
                     className="text-primary hover:underline"
