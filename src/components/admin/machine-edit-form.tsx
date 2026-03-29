@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useAdminSession } from "@/hooks/use-admin-session";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +44,7 @@ interface MachineEditFormProps {
 
 export function MachineEditForm({ machine }: MachineEditFormProps) {
   const router = useRouter();
-  const [adminName, setAdminName] = useState("");
+  const { adminName } = useAdminSession();
   const [status, setStatus] = useState<MachineStatus>(machine.status);
   const [coolingMinutes, setCoolingMinutes] = useState<string>("30");
   const [flavor, setFlavor] = useState(machine.flavor ?? "");
@@ -52,11 +53,6 @@ export function MachineEditForm({ machine }: MachineEditFormProps) {
   const [isCleaning, setIsCleaning] = useState(false);
   const [showCleanConfirm, setShowCleanConfirm] = useState(false);
   const [lastCleanedAt, setLastCleanedAt] = useState(machine.last_cleaned_at);
-
-  useEffect(() => {
-    const name = sessionStorage.getItem("admin_name") ?? "";
-    setAdminName(name);
-  }, []);
 
   // 실시간 구독 - 충돌 감지
   useEffect(() => {

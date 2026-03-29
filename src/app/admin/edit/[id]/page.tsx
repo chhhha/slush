@@ -1,7 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { MachineEditForm } from "@/components/admin/machine-edit-form";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { requireAdmin } from "@/lib/admin-guard";
 import type { Machine } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,9 @@ interface PageProps {
 }
 
 export default async function EditMachinePage({ params }: PageProps) {
+  const guard = await requireAdmin();
+  if (!guard.success) redirect("/admin/login");
+
   const { id } = await params;
   const supabase = createAdminClient();
 

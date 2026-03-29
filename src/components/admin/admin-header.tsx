@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LayoutDashboard, ClipboardList, Settings, LogOut, CupSoda } from "lucide-react";
@@ -10,30 +10,38 @@ import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useAdminSession } from "@/hooks/use-admin-session";
 
 export function AdminHeader() {
   const router = useRouter();
-  const [adminName, setAdminName] = useState("");
+  const { adminName, refresh } = useAdminSession();
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
 
-  useEffect(() => {
-    setAdminName(sessionStorage.getItem("admin_name") ?? "");
-  }, []);
-
-  function handleNameSave() {
+  async function handleNameSave() {
     const trimmed = newName.trim();
     if (!trimmed) return;
-    sessionStorage.setItem("admin_name", trimmed);
-    setAdminName(trimmed);
-    setNameDialogOpen(false);
-    toast.success("이름이 변경되었습니다");
+    try {
+      const res = await fetch("/api/admin/auth/rename", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed }),
+      });
+      if (!res.ok) {
+        toast.error("이름 변경에 실패했습니다");
+        return;
+      }
+      await refresh();
+      setNameDialogOpen(false);
+      toast.success("이름이 변경되었습니다");
+    } catch {
+      toast.error("이름 변경에 실패했습니다");
+    }
   }
 
   async function handleLogout() {
     try {
       await fetch("/api/admin/auth/logout", { method: "POST" });
-      sessionStorage.removeItem("admin_name");
       router.push("/");
     } catch {
       toast.error("로그아웃에 실패했습니다");
