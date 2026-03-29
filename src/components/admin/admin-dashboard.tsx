@@ -64,7 +64,7 @@ export function AdminDashboard({ initialMachines }: AdminDashboardProps) {
               <div className="flex items-center gap-2">
                 <Bell className="size-4 text-muted-foreground" />
                 <Label htmlFor="notif-toggle" className="text-sm">
-                  품절 브라우저 알림
+                  품절 알림 (브라우저)
                 </Label>
                 <Switch
                   id="notif-toggle"
