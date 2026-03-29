@@ -96,12 +96,12 @@ const GREETINGS: Record<string, string[]> = {
 function getGreeting(): string {
   const h = new Date().getHours();
   let pool: string[];
-  if (h < 6) pool = GREETINGS.dawn;
-  else if (h < 11) pool = GREETINGS.morning;
-  else if (h < 14) pool = GREETINGS.lunch;
-  else if (h < 17) pool = GREETINGS.afternoon;
-  else if (h < 20) pool = GREETINGS.evening;
-  else pool = GREETINGS.night;
+  if (h < 6) pool = GREETINGS.dawn!;
+  else if (h < 11) pool = GREETINGS.morning!;
+  else if (h < 14) pool = GREETINGS.lunch!;
+  else if (h < 17) pool = GREETINGS.afternoon!;
+  else if (h < 20) pool = GREETINGS.evening!;
+  else pool = GREETINGS.night!;
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
