@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "oh-my-claudecode@omc": true,
+    "playwright@claude-plugins-official": true
+  }
+}

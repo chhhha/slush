@@ -1,0 +1,305 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(0.988 0.003 230);
+  --foreground: oklch(0.16 0.01 235);
+  --card: oklch(0.995 0.002 230);
+  --card-foreground: oklch(0.16 0.01 235);
+  --popover: oklch(0.995 0.002 230);
+  --popover-foreground: oklch(0.16 0.01 235);
+  --primary: oklch(0.52 0.18 225);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.955 0.015 225);
+  --secondary-foreground: oklch(0.2 0.015 230);
+  --muted: oklch(0.955 0.012 230);
+  --muted-foreground: oklch(0.52 0.02 230);
+  --accent: oklch(0.94 0.02 225);
+  --accent-foreground: oklch(0.2 0.015 230);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.908 0.01 230);
+  --input: oklch(0.908 0.01 230);
+  --ring: oklch(0.52 0.18 225);
+  --chart-1: oklch(0.58 0.16 225);
+  --chart-2: oklch(0.62 0.14 195);
+  --chart-3: oklch(0.52 0.13 265);
+  --chart-4: oklch(0.68 0.12 180);
+  --chart-5: oklch(0.48 0.15 250);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.978 0.006 230);
+  --sidebar-foreground: oklch(0.16 0.01 235);
+  --sidebar-primary: oklch(0.52 0.18 225);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.94 0.02 225);
+  --sidebar-accent-foreground: oklch(0.2 0.015 230);
+  --sidebar-border: oklch(0.908 0.01 230);
+  --sidebar-ring: oklch(0.52 0.18 225);
+}
+
+.dark {
+  --background: oklch(0.16 0.012 240);
+  --foreground: oklch(0.985 0.005 225);
+  --card: oklch(0.21 0.015 240);
+  --card-foreground: oklch(0.985 0.005 225);
+  --popover: oklch(0.21 0.015 240);
+  --popover-foreground: oklch(0.985 0.005 225);
+  --primary: oklch(0.7 0.14 225);
+  --primary-foreground: oklch(0.16 0.015 240);
+  --secondary: oklch(0.27 0.02 240);
+  --secondary-foreground: oklch(0.985 0.005 225);
+  --muted: oklch(0.27 0.02 240);
+  --muted-foreground: oklch(0.65 0.03 230);
+  --accent: oklch(0.27 0.025 240);
+  --accent-foreground: oklch(0.985 0.005 225);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0.7 0.04 235 / 12%);
+  --input: oklch(0.7 0.04 235 / 18%);
+  --ring: oklch(0.6 0.12 225);
+  --chart-1: oklch(0.65 0.14 225);
+  --chart-2: oklch(0.7 0.12 195);
+  --chart-3: oklch(0.58 0.11 265);
+  --chart-4: oklch(0.72 0.1 180);
+  --chart-5: oklch(0.55 0.13 250);
+  --sidebar: oklch(0.2 0.015 240);
+  --sidebar-foreground: oklch(0.985 0.005 225);
+  --sidebar-primary: oklch(0.7 0.14 225);
+  --sidebar-primary-foreground: oklch(0.985 0.005 225);
+  --sidebar-accent: oklch(0.27 0.025 240);
+  --sidebar-accent-foreground: oklch(0.985 0.005 225);
+  --sidebar-border: oklch(0.7 0.04 235 / 12%);
+  --sidebar-ring: oklch(0.6 0.12 225);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+    scrollbar-gutter: stable;
+  }
+}
+
+/* ── Delight Animations ── */
+
+/* 이용가능 전환 축하 팝 */
+@keyframes celebrate-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.06); }
+  60% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+/* 로고 워블 (탭 시) */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(3deg); }
+}
+
+/* 인사말 페이드인 */
+@keyframes greeting-fade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 연결 복구 축하 슬라이드 */
+@keyframes reconnect-celebrate {
+  0% { transform: translateY(-100%); }
+  15% { transform: translateY(0); }
+  85% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow-pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+  50% {
+    box-shadow: 0 0 16px 3px rgba(34, 197, 94, 0.15);
+  }
+}
+
+@keyframes gentle-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes progress-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 이용가능 아이콘 부드러운 호흡 펄스 */
+@keyframes icon-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* 빈 상태 플레이스홀더 부유 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* 연결 끊김 배너 슬라이드 */
+@keyframes banner-slide {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+/* 상태 변경 시 링 플래시 (Realtime 업데이트 알림) */
+@keyframes status-ring {
+  from {
+    outline: 3px solid oklch(0.7 0.14 225 / 50%);
+    outline-offset: -1px;
+  }
+  to {
+    outline: 3px solid transparent;
+    outline-offset: 4px;
+  }
+}
+
+@layer utilities {
+  .animate-card-enter {
+    animation: card-enter 0.4s ease-out both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse-green 2.5s ease-in-out infinite;
+  }
+
+  .animate-gentle-spin {
+    animation: gentle-spin 4s linear infinite;
+  }
+
+  .animate-progress-shimmer {
+    background-size: 200% 100%;
+    animation: progress-shimmer 1.5s linear infinite;
+  }
+
+  .animate-icon-breathe {
+    animation: icon-breathe 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-float-in {
+    animation: card-enter 0.4s ease-out both, float 3s ease-in-out infinite both;
+    animation-delay: var(--enter-delay, 0ms), calc(var(--enter-delay, 0ms) + 0.8s);
+  }
+
+  .animate-banner-slide {
+    animation: banner-slide 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .animate-status-ring {
+    animation: status-ring 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .animate-celebrate-pop {
+    animation: celebrate-pop 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .animate-wiggle {
+    animation: wiggle 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .animate-greeting-fade {
+    animation: greeting-fade 0.6s ease-out both;
+    animation-delay: 0.3s;
+  }
+
+  .animate-reconnect-celebrate {
+    animation: reconnect-celebrate 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-enter,
+  .animate-glow-pulse,
+  .animate-gentle-spin,
+  .animate-progress-shimmer,
+  .animate-icon-breathe,
+  .animate-float,
+  .animate-float-in,
+  .animate-banner-slide,
+  .animate-status-ring,
+  .animate-celebrate-pop,
+  .animate-wiggle,
+  .animate-greeting-fade,
+  .animate-reconnect-celebrate {
+    animation: none;
+  }
+  .animate-card-enter,
+  .animate-float-in,
+  .animate-greeting-fade {
+    opacity: 1;
+  }
+}
