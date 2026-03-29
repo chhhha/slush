@@ -262,7 +262,7 @@ function TankContent({
             </p>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-blue-200/50 dark:bg-blue-800/50">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 dark:from-blue-500 dark:to-cyan-500 animate-progress-shimmer transition-[width] duration-1000 ease-linear"
+                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 dark:from-blue-500 dark:to-cyan-500 animate-progress-breathe transition-[width] duration-1000 ease-linear"
                 style={{ width: `${coolingProgress}%` }}
                 suppressHydrationWarning
               />

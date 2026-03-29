@@ -188,9 +188,9 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes progress-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+@keyframes progress-breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* 이용가능 아이콘 부드러운 호흡 펄스 */
@@ -237,9 +237,8 @@
     animation: gentle-spin 4s linear infinite;
   }
 
-  .animate-progress-shimmer {
-    background-size: 200% 100%;
-    animation: progress-shimmer 1.5s linear infinite;
+  .animate-progress-breathe {
+    animation: progress-breathe 2s ease-in-out infinite;
   }
 
   .animate-icon-breathe {
@@ -285,7 +284,7 @@
   .animate-card-enter,
   .animate-glow-pulse,
   .animate-gentle-spin,
-  .animate-progress-shimmer,
+  .animate-progress-breathe,
   .animate-icon-breathe,
   .animate-float,
   .animate-float-in,
