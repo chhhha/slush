@@ -156,8 +156,21 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
               >
                 <Info className="size-5" />
               </PopoverTrigger>
-              <PopoverContent className="w-auto text-sm">
-                추후 작성 예정
+              <PopoverContent className="w-64 text-sm space-y-2">
+                <p className="font-semibold">DA사업부 S/W개발그룹</p>
+                <p>슬러시 이벤트 현황 페이지예요! 🍧</p>
+                <p className="text-muted-foreground">
+                  이 페이지는 AI를 활용하여 개발했어요.
+                </p>
+                <div className="border-t pt-2 text-xs text-muted-foreground">
+                  <p>개발: 차재훈</p>
+                  <a
+                    href="mailto:jh8948.cha@samsung.com"
+                    className="text-primary hover:underline"
+                  >
+                    jh8948.cha@samsung.com
+                  </a>
+                </div>
               </PopoverContent>
             </Popover>
             <ThemeToggle />

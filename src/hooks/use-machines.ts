@@ -17,6 +17,9 @@ export function useMachines(initialMachines: Machine[] = []) {
   }, []);
 
   useEffect(() => {
+    // 마운트 시 최신 데이터 fetch (Next.js 라우터 캐시로 인한 stale 데이터 방지)
+    void fetchMachines();
+
     const supabase = createClient();
 
     const channel = supabase
@@ -47,7 +50,23 @@ export function useMachines(initialMachines: Machine[] = []) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetchMachines]);
+
+  // bfcache 복원 또는 탭 복귀 시 최신 데이터로 갱신
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) void fetchMachines();
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") void fetchMachines();
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [fetchMachines]);
 
   return { machines, refetch: fetchMachines };
 }

@@ -59,11 +59,57 @@ export function FloorMachineCard({
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       {/* 층 헤더 */}
-      <div className="flex items-center border-b px-4 py-2.5">
-        <h3 className="text-base font-semibold text-foreground">{floor}층</h3>
+      <div
+        className={cn(
+          "relative flex items-center border-b px-4 py-2.5 overflow-hidden",
+          floor === 4 && "bg-gradient-to-r from-sky-50/80 to-transparent dark:from-sky-950/40",
+          floor === 3 && "bg-gradient-to-r from-cyan-50/80 to-transparent dark:from-cyan-950/40",
+          floor === 2 && "bg-gradient-to-r from-blue-50/80 to-transparent dark:from-blue-950/40",
+        )}
+      >
+        <div
+          className={cn(
+            "absolute left-0 top-0 h-full w-1 rounded-r-full",
+            floor === 4 && "bg-sky-400 dark:bg-sky-500",
+            floor === 3 && "bg-cyan-400 dark:bg-cyan-500",
+            floor === 2 && "bg-blue-400 dark:bg-blue-500",
+          )}
+        />
+        {/* 장식 원 패턴 */}
+        <div
+          className={cn(
+            "pointer-events-none absolute -right-3 -top-3 size-16 rounded-full opacity-[0.07] dark:opacity-[0.05]",
+            floor === 4 && "bg-sky-400",
+            floor === 3 && "bg-cyan-400",
+            floor === 2 && "bg-blue-400",
+          )}
+        />
+        <div
+          className={cn(
+            "pointer-events-none absolute right-8 -bottom-2 size-8 rounded-full opacity-[0.05] dark:opacity-[0.04]",
+            floor === 4 && "bg-sky-300",
+            floor === 3 && "bg-cyan-300",
+            floor === 2 && "bg-blue-300",
+          )}
+        />
+        <h3
+          className={cn(
+            "text-base font-semibold",
+            floor === 4 && "text-sky-600 dark:text-sky-400",
+            floor === 3 && "text-cyan-600 dark:text-cyan-400",
+            floor === 2 && "text-blue-600 dark:text-blue-400",
+          )}
+        >
+          {floor}층
+        </h3>
         <span className="ml-auto">
           <Popover>
-            <PopoverTrigger className="text-muted-foreground hover:text-foreground transition-colors flex items-center cursor-pointer">
+            <PopoverTrigger className={cn(
+              "transition-colors flex items-center cursor-pointer",
+              floor === 4 && "text-muted-foreground hover:text-sky-600 dark:hover:text-sky-400",
+              floor === 3 && "text-muted-foreground hover:text-cyan-600 dark:hover:text-cyan-400",
+              floor === 2 && "text-muted-foreground hover:text-blue-600 dark:hover:text-blue-400",
+            )}>
               <Info className="size-4" />
             </PopoverTrigger>
             <PopoverContent className="w-auto text-sm">
