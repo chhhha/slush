@@ -102,7 +102,7 @@ function getGreeting(): string {
   else if (h < 17) pool = GREETINGS.afternoon!;
   else if (h < 20) pool = GREETINGS.evening!;
   else pool = GREETINGS.night!;
-  return pool[Math.floor(Math.random() * pool.length)];
+  return pool[Math.floor(Math.random() * pool.length)]!;
 }
 
 interface EmployeeViewProps {
