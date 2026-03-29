@@ -34,7 +34,7 @@ export function AdminHeader() {
     try {
       await fetch("/api/admin/auth/logout", { method: "POST" });
       sessionStorage.removeItem("admin_name");
-      router.push("/admin/login");
+      router.push("/");
     } catch {
       toast.error("로그아웃에 실패했습니다");
     }

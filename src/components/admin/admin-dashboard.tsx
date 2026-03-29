@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMachines } from "@/hooks/use-machines";
-import { useSoldoutNotification } from "@/hooks/use-soldout-notification";
 import { useBrowserNotification } from "@/hooks/use-browser-notification";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Switch } from "@/components/ui/switch";
@@ -24,9 +23,8 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ initialMachines }: AdminDashboardProps) {
   const { machines } = useMachines(initialMachines);
-  const { isEnabled: notifEnabled, toggle, notify, showNotification } =
+  const { isEnabled: notifEnabled, toggle, showNotification } =
     useBrowserNotification();
-  useSoldoutNotification(machines, notify);
 
   const handleToggleNotif = async () => {
     const result = await toggle();

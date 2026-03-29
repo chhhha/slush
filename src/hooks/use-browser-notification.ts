@@ -56,6 +56,20 @@ export function useBrowserNotification() {
     void ensureSW();
   }, []);
 
+  // 동일 탭 내 다른 훅 인스턴스와 알림 상태 동기화
+  useEffect(() => {
+    const syncState = () => {
+      if ("Notification" in window) {
+        const stored = localStorage.getItem(ENABLED_KEY);
+        const enabled = stored === "true" && Notification.permission === "granted";
+        setIsEnabled(enabled);
+        isEnabledRef.current = enabled;
+      }
+    };
+    window.addEventListener("slush-notif-sync", syncState);
+    return () => window.removeEventListener("slush-notif-sync", syncState);
+  }, []);
+
   useEffect(() => {
     isEnabledRef.current = isEnabled;
   }, [isEnabled]);
@@ -67,6 +81,7 @@ export function useBrowserNotification() {
       localStorage.setItem(ENABLED_KEY, "false");
       isEnabledRef.current = false;
       setIsEnabled(false);
+      window.dispatchEvent(new Event("slush-notif-sync"));
       return "disabled";
     }
 
@@ -80,6 +95,7 @@ export function useBrowserNotification() {
       localStorage.setItem(ENABLED_KEY, "true");
       isEnabledRef.current = true;
       setIsEnabled(true);
+      window.dispatchEvent(new Event("slush-notif-sync"));
       return "enabled";
     }
 
