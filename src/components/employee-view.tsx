@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { CupSoda, Info, Settings } from "lucide-react";
 import { useMachines } from "@/hooks/use-machines";
@@ -120,6 +120,11 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
   const { machines } = useMachines(initialMachines);
   const [reportTarget, setReportTarget] = useState<Machine | null>(null);
   const [isWiggling, setIsWiggling] = useState(false);
+  const [greeting, setGreeting] = useState("");
+
+  useEffect(() => {
+    setGreeting(getGreeting());
+  }, []);
 
   const handleLogoClick = useCallback(() => {
     setIsWiggling(true);
@@ -189,7 +194,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
             className="animate-greeting-fade text-center text-sm text-muted-foreground"
             suppressHydrationWarning
           >
-            {getGreeting()}
+            {greeting}
           </p>
           {FLOORS.map((floor, idx) => (
             <div
