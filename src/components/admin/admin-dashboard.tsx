@@ -24,7 +24,7 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ initialMachines }: AdminDashboardProps) {
   const { machines } = useMachines(initialMachines);
-  const { isEnabled: notifEnabled, toggle, notify } =
+  const { isEnabled: notifEnabled, toggle, notify, showNotification } =
     useBrowserNotification();
   useSoldoutNotification(machines, notify);
 
@@ -32,7 +32,7 @@ export function AdminDashboard({ initialMachines }: AdminDashboardProps) {
     const result = await toggle();
     switch (result) {
       case "enabled":
-        new Notification("슬러시 알림 활성화", {
+        void showNotification("슬러시 알림 활성화", {
           body: "품절 발생 시 이 알림이 표시됩니다.",
           icon: "/favicon.ico",
         });
