@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/internal/auto-transition",
-      "schedule": "* * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
