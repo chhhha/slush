@@ -9,7 +9,7 @@ import { useBrowserNotification } from "@/hooks/use-browser-notification";
  * 루트 레이아웃에 배치되어 페이지 전환과 무관하게 동작한다.
  */
 export function SoldoutWatcher() {
-  const { machines } = useMachines();
+  const { machines } = useMachines([], "machines-soldout-watcher");
   const { notify } = useBrowserNotification();
   useSoldoutNotification(machines, notify);
 

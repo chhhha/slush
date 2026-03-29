@@ -60,16 +60,21 @@ export function AdminDashboard({ initialMachines }: AdminDashboardProps) {
                 기계를 클릭하면 상태를 변경할 수 있습니다
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Bell className="size-4 text-muted-foreground" />
-              <Label htmlFor="notif-toggle" className="text-sm">
-                품절 브라우저 알림
-              </Label>
-              <Switch
-                id="notif-toggle"
-                checked={notifEnabled}
-                onCheckedChange={() => void handleToggleNotif()}
-              />
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Bell className="size-4 text-muted-foreground" />
+                <Label htmlFor="notif-toggle" className="text-sm">
+                  품절 브라우저 알림
+                </Label>
+                <Switch
+                  id="notif-toggle"
+                  checked={notifEnabled}
+                  onCheckedChange={() => void handleToggleNotif()}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground/70 pl-6">
+                iOS Safari는 미지원
+              </p>
             </div>
           </div>
 

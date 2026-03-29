@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Machine } from "@/types";
 
-export function useMachines(initialMachines: Machine[] = []) {
+export function useMachines(initialMachines: Machine[] = [], channelName = "machines-realtime") {
   const [machines, setMachines] = useState<Machine[]>(initialMachines);
 
   const fetchMachines = useCallback(async () => {
@@ -23,7 +23,7 @@ export function useMachines(initialMachines: Machine[] = []) {
     const supabase = createClient();
 
     const channel = supabase
-      .channel("machines-realtime")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "machines" },
@@ -50,7 +50,7 @@ export function useMachines(initialMachines: Machine[] = []) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchMachines]);
+  }, [fetchMachines, channelName]);
 
   // bfcache 복원 또는 탭 복귀 시 최신 데이터로 갱신
   useEffect(() => {

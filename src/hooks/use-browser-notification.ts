@@ -11,11 +11,24 @@ const ENABLED_KEY = "slush_browser_notification_enabled";
  */
 let swRegistration: ServiceWorkerRegistration | null = null;
 
+/** SW가 active 상태가 될 때까지 대기 */
+function waitForActive(reg: ServiceWorkerRegistration): Promise<ServiceWorkerRegistration> {
+  if (reg.active) return Promise.resolve(reg);
+  const worker = reg.installing || reg.waiting;
+  if (!worker) return Promise.resolve(reg);
+  return new Promise((resolve) => {
+    worker.addEventListener("statechange", () => {
+      if (worker.state === "activated") resolve(reg);
+    });
+  });
+}
+
 async function ensureSW(): Promise<ServiceWorkerRegistration | null> {
-  if (swRegistration) return swRegistration;
+  if (swRegistration?.active) return swRegistration;
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return null;
   try {
-    swRegistration = await navigator.serviceWorker.register("/sw.js");
+    const reg = await navigator.serviceWorker.register("/sw.js");
+    swRegistration = await waitForActive(reg);
     return swRegistration;
   } catch {
     return null;
