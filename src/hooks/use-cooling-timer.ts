@@ -49,7 +49,10 @@ export function useCoolingTimer({
   }, [coolingEndAt]);
 
   // remaining은 렌더 시 계산 (setState 불필요)
-  const remaining = coolingEndAt ? formatRemainingTime(coolingEndAt) : null;
+  // 만료 후 상태 전환까지의 짧은 gap에는 완료 메시지 표시
+  const remaining = coolingEndAt
+    ? (formatRemainingTime(coolingEndAt) ?? "냉각 완료! 곧 이용 가능 🎉")
+    : null;
 
   return { remaining };
 }
