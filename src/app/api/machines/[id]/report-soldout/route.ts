@@ -50,8 +50,7 @@ export async function POST(
 
   // IP 주소 추출
   const ipAddress =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    req.headers.get("x-real-ip") ??
+    req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ??
     "unknown";
 
   // HttpOnly cookie 읽기/생성
