@@ -101,6 +101,21 @@ ALTER TABLE banned_identifiers ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "machines_select_all" ON machines FOR SELECT USING (true);
 CREATE POLICY "announcements_select_all" ON announcements FOR SELECT USING (true);
 
+-- 7) site_settings: 사이트 전역 설정 (단일 행)
+CREATE TABLE site_settings (
+  id TEXT PRIMARY KEY DEFAULT 'global' CHECK (id = 'global'),
+  report_soldout_enabled BOOLEAN NOT NULL DEFAULT true,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- site_settings 초기 데이터
+INSERT INTO site_settings (id) VALUES ('global');
+
+-- RLS
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "site_settings_select_all" ON site_settings FOR SELECT USING (true);
+
 -- Realtime 활성화
 ALTER PUBLICATION supabase_realtime ADD TABLE machines;
 ALTER PUBLICATION supabase_realtime ADD TABLE announcements;
+ALTER PUBLICATION supabase_realtime ADD TABLE site_settings;

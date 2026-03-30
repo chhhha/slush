@@ -17,7 +17,7 @@ export async function createAdminToken(name: string): Promise<string> {
   } satisfies Omit<AdminTokenPayload, "iat">)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("24h")
+    .setExpirationTime("18h")
     .sign(getSecret());
 }
 

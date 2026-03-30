@@ -133,6 +133,20 @@ export interface Database {
         >;
         Relationships: [];
       };
+      site_settings: {
+        Row: {
+          id: string;
+          report_soldout_enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          report_soldout_enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

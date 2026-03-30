@@ -59,6 +59,21 @@ export async function POST(
 
   const supabase = createAdminClient();
 
+  // 품절 제보 기능 활성 여부 확인
+  const { data: settings } = await supabase
+    .from("site_settings")
+    .select("report_soldout_enabled")
+    .eq("id", "global")
+    .single();
+
+  if (settings && !settings.report_soldout_enabled) {
+    return jsonWithCookie(
+      { success: false, error: "품절 제보 기능이 일시 중지되었습니다." },
+      403,
+      cookieId,
+    );
+  }
+
   // 관리자 세션 확인 (관리자는 쿨다운/ban 체크 생략)
   const admin = await verifyAdminToken();
   const isAdmin = admin !== null;
@@ -66,23 +81,24 @@ export async function POST(
   // 관리자가 아닌 경우에만 ban/쿨다운 체크
   if (!isAdmin) {
     // 1. Shadow ban 체크 (차단 사실을 알리지 않음)
-    const identifiers = [
+    const identifiers: { type: "device_id" | "ip_address" | "fingerprint" | "cookie_id"; value: string }[] = [
       { type: "device_id", value: deviceId },
       { type: "ip_address", value: ipAddress },
       { type: "fingerprint", value: fingerprint },
       { type: "cookie_id", value: cookieId },
     ];
 
-    const banChecks = identifiers.map(({ type, value }) =>
-      `and(identifier_type.eq.${type},identifier_value.eq.${value})`
+    const banResults = await Promise.all(
+      identifiers.map(({ type, value }) =>
+        supabase
+          .from("banned_identifiers")
+          .select("*", { count: "exact", head: true })
+          .eq("identifier_type", type)
+          .eq("identifier_value", value)
+      )
     );
 
-    const { count: banCount } = await supabase
-      .from("banned_identifiers")
-      .select("*", { count: "exact", head: true })
-      .or(banChecks.join(","));
-
-    if ((banCount ?? 0) > 0) {
+    if (banResults.some(({ count }) => (count ?? 0) > 0)) {
       return jsonWithCookie(
         { success: false, error: "요청을 처리할 수 없습니다." },
         400,
@@ -95,13 +111,20 @@ export async function POST(
       Date.now() - COOLDOWN_CONFIG.COOLDOWN_MINUTES * 60_000
     ).toISOString();
 
-    const { count: recentCount } = await supabase
-      .from("abuse_records")
-      .select("*", { count: "exact", head: true })
-      .gte("reported_at", cooldownStart)
-      .or(`device_id.eq.${deviceId},cookie_id.eq.${cookieId}`);
+    const cooldownResults = await Promise.all([
+      supabase
+        .from("abuse_records")
+        .select("*", { count: "exact", head: true })
+        .gte("reported_at", cooldownStart)
+        .eq("device_id", deviceId),
+      supabase
+        .from("abuse_records")
+        .select("*", { count: "exact", head: true })
+        .gte("reported_at", cooldownStart)
+        .eq("cookie_id", cookieId),
+    ]);
 
-    if ((recentCount ?? 0) > 0) {
+    if (cooldownResults.some(({ count }) => (count ?? 0) > 0)) {
       return jsonWithCookie(
         {
           success: false,

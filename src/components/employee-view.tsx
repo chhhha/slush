@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { CupSoda, Info, Settings } from "lucide-react";
 import { useMachines } from "@/hooks/use-machines";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { FloorMachineCard } from "@/components/machine-card";
 import { ReportSoldOutDialog } from "@/components/report-soldout-dialog";
 import { AnnouncementPopup } from "@/components/announcement-popup";
@@ -118,6 +119,7 @@ interface EmployeeViewProps {
  */
 export function EmployeeView({ initialMachines }: EmployeeViewProps) {
   const { machines } = useMachines(initialMachines);
+  const { report_soldout_enabled } = useSiteSettings();
   const [reportTarget, setReportTarget] = useState<Machine | null>(null);
   const [isWiggling, setIsWiggling] = useState(false);
   const [greeting, setGreeting] = useState("");
@@ -223,6 +225,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
           onOpenChange={(open) => {
             if (!open) setReportTarget(null);
           }}
+          reportEnabled={report_soldout_enabled}
         />
       )}
     </div>

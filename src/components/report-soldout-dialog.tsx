@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { ShieldAlert } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,8 @@ interface ReportSoldOutDialogProps {
   open: boolean;
   /** 열림 상태 변경 콜백 */
   onOpenChange: (open: boolean) => void;
+  /** 품절 제보 기능 활성화 여부 */
+  reportEnabled?: boolean;
 }
 
 /**
@@ -33,6 +36,7 @@ export function ReportSoldOutDialog({
   machine,
   open,
   onOpenChange,
+  reportEnabled = true,
 }: ReportSoldOutDialogProps) {
   const [isPending, setIsPending] = useState(false);
 
@@ -65,6 +69,36 @@ export function ReportSoldOutDialog({
       setIsPending(false);
     }
   };
+
+  // 품절 제보 기능이 비활성화된 경우 안내 다이얼로그
+  if (!reportEnabled) {
+    return (
+      <AlertDialog open={open} onOpenChange={onOpenChange}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950">
+              <ShieldAlert className="size-6 text-amber-600 dark:text-amber-400" />
+            </div>
+            <AlertDialogTitle className="text-center">
+              품절 제보가 일시 중지되었어요
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              관리자가 품절 제보 기능을 잠시 멈춰두었어요.
+              <br />
+              품절을 발견하셨다면, 각 층의 CA 또는 총무팀에
+              <br />
+              직접 알려주시면 빠르게 처리해 드릴게요!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogAction onClick={() => onOpenChange(false)}>
+              확인
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
