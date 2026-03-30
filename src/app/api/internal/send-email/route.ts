@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { error: sendError } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev",
+      from: process.env.RESEND_FROM_EMAIL ?? "slush@dasw.kr",
       to: emailList,
       subject,
       text: `${machine.floor}층 ${positionLabel}(${machine.flavor}) 슬러시가 일시품절되었습니다.`,
