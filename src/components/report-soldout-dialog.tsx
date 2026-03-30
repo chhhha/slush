@@ -82,14 +82,14 @@ export function ReportSoldOutDialog({
               <ShieldAlert className="size-6 text-amber-600 dark:text-amber-400" />
             </div>
             <AlertDialogTitle>
-              품절 제보가 일시 중지되었어요
+              품절 제보 기능 일시 중지
             </AlertDialogTitle>
             <AlertDialogDescription>
-              관리자가 품절 제보 기능을 잠시 멈춰두었어요.
+              관리자가 이 기능을 잠시 멈춰두었어요.
               <br />
               슬러시가 비어있다면, 각 층의 CA 또는 총무에게
               <br />
-              직접 알려주시면 감사하겠습니다!
+              직접 알려주세요!
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
