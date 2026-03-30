@@ -1,6 +1,18 @@
 // 모든 시간은 UTC로 DB에 저장, 프론트엔드에서 KST 변환 표시
 
-/** UTC ISO -> "X시간 Y분" 경과 시간 */
+/** UTC ISO -> 간소화된 경과 시간 (직원 페이지용) */
+export function formatElapsedTimeSimple(utcIsoString: string | null): string {
+  if (!utcIsoString) return "-";
+  const diffMs = Date.now() - new Date(utcIsoString).getTime();
+  if (diffMs < 0) return "-";
+  const totalMin = Math.floor(diffMs / 60_000);
+  if (totalMin < 60) return "방금 전";
+  const h = Math.floor(totalMin / 60);
+  if (h < 24) return h + "시간 전";
+  return Math.floor(h / 24) + "일 전";
+}
+
+/** UTC ISO -> "X시간 Y분" 경과 시간 (관리자용 상세) */
 export function formatElapsedTime(utcIsoString: string | null): string {
   if (!utcIsoString) return "-";
   const diffMs = Date.now() - new Date(utcIsoString).getTime();

@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants";
 import { useCoolingTimer } from "@/hooks/use-cooling-timer";
-import { formatElapsedTime } from "@/lib/utils/time";
+import { formatElapsedTimeSimple } from "@/lib/utils/time";
 import type { Machine } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -112,8 +112,10 @@ export function FloorMachineCard({
             )}>
               <Info className="size-4" />
             </PopoverTrigger>
-            <PopoverContent className="w-auto text-sm">
-              추후 작성 예정
+            <PopoverContent className="w-auto text-sm text-muted-foreground">
+              {floor === 4 && "DA1동 4층 A존 AI Solution Lab 탕비실"}
+              {floor === 3 && "DA1동 3층 B존 제품S/W개발Lab 탕비실 (S/W 시험실 뒤쪽)"}
+              {floor === 2 && "DA1동 2층 C존 S/W Platform Lab 탕비실"}
             </PopoverContent>
           </Popover>
         </span>
@@ -344,7 +346,7 @@ function TankContent({
         suppressHydrationWarning
       >
         {machine.last_cleaned_at
-          ? `마지막 세척: ${formatElapsedTime(machine.last_cleaned_at)}`
+          ? `마지막 세척: ${formatElapsedTimeSimple(machine.last_cleaned_at)}`
           : "\u00A0"}
       </p>
     </div>
