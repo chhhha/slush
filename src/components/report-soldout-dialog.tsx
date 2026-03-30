@@ -85,9 +85,9 @@ export function ReportSoldOutDialog({
             <AlertDialogDescription className="text-center">
               관리자가 품절 제보 기능을 잠시 멈춰두었어요.
               <br />
-              품절을 발견하셨다면, 각 층의 CA 또는 총무팀에
+              슬러시가 비어있다면, 각 층의 CA 또는 총무에게
               <br />
-              직접 알려주시면 빠르게 처리해 드릴게요!
+              직접 알려주시면 감사하겠습니다!
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
