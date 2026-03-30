@@ -106,6 +106,7 @@ CREATE TABLE site_settings (
   id TEXT PRIMARY KEY DEFAULT 'global' CHECK (id = 'global'),
   report_soldout_enabled BOOLEAN NOT NULL DEFAULT true,
   admin_login_strict BOOLEAN NOT NULL DEFAULT false,
+  admin_token_epoch TIMESTAMPTZ,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

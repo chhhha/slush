@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Shield, Lock, Power, ShieldCheck, UserPlus, X } from "lucide-react";
+import { Shield, Lock, Power, ShieldCheck, UserPlus, X, LogOut, Megaphone } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,8 +13,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { AnnouncementForm } from "@/components/admin/announcement-form";
 
 interface AllowedName {
   id: number;
@@ -38,6 +50,9 @@ export default function MasterPage() {
   const [newName, setNewName] = useState("");
   const [isAddingName, setIsAddingName] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  // 모든 관리자 로그아웃
+  const [isForceLoggingOut, setIsForceLoggingOut] = useState(false);
 
   // PIN 인증
   const handleLogin = async (e: React.FormEvent) => {
@@ -200,6 +215,24 @@ export default function MasterPage() {
       toast.error("서버 연결에 실패했습니다");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  // 모든 관리자 강제 로그아웃
+  const handleForceLogout = async () => {
+    setIsForceLoggingOut(true);
+    try {
+      const res = await fetch("/api/master/force-logout", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("모든 관리자가 로그아웃 처리되었습니다");
+      } else {
+        toast.error(data.error ?? "처리에 실패했습니다");
+      }
+    } catch {
+      toast.error("서버 연결에 실패했습니다");
+    } finally {
+      setIsForceLoggingOut(false);
     }
   };
 
@@ -416,6 +449,74 @@ export default function MasterPage() {
                 )}
               </div>
             )}
+          </div>
+          {/* 공지사항 */}
+          <div className="rounded-lg border p-4 space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <Megaphone className="size-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">공지사항</p>
+                <p className="text-xs text-muted-foreground">
+                  직원 페이지에 표시되는 공지를 관리합니다
+                </p>
+              </div>
+            </div>
+            <AnnouncementForm
+              adminName="마스터"
+              apiBasePath="/api/master/announcements"
+            />
+          </div>
+
+          {/* 모든 관리자 로그아웃 */}
+          <div className="rounded-lg border border-destructive/30 p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
+                  <LogOut className="size-5 text-red-600 dark:text-red-400" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">모든 관리자 로그아웃</p>
+                  <p className="text-xs text-muted-foreground">
+                    현재 로그인된 모든 관리자 세션을 즉시 만료시킵니다
+                  </p>
+                </div>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger
+                  render={
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      disabled={isForceLoggingOut}
+                    />
+                  }
+                >
+                  {isForceLoggingOut ? "처리 중..." : "실행"}
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      모든 관리자를 로그아웃하시겠습니까?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      현재 로그인된 모든 관리자의 세션이 즉시 만료됩니다. 관리자
+                      페이지를 이용하려면 다시 로그인해야 합니다.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>취소</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleForceLogout}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      모두 로그아웃
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         </CardContent>
       </Card>

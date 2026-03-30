@@ -138,12 +138,14 @@ export interface Database {
           id: string;
           report_soldout_enabled: boolean;
           admin_login_strict: boolean;
+          admin_token_epoch: string | null;
           updated_at: string;
         };
         Insert: {
           id?: string;
           report_soldout_enabled?: boolean;
           admin_login_strict?: boolean;
+          admin_token_epoch?: string | null;
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;

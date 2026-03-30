@@ -12,6 +12,7 @@ import type { Announcement } from "@/types";
 
 interface AnnouncementFormProps {
   adminName: string;
+  apiBasePath?: string;
   onSuccess?: () => void;
 }
 
@@ -20,7 +21,7 @@ interface AnnouncementFormProps {
  * - 활성 공지가 있으면 내용 표시 + 비활성화 버튼
  * - Realtime 구독으로 상태 자동 갱신
  */
-export function AnnouncementForm({ adminName, onSuccess }: AnnouncementFormProps) {
+export function AnnouncementForm({ adminName, apiBasePath = "/api/admin/announcements", onSuccess }: AnnouncementFormProps) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeAnnouncement, setActiveAnnouncement] = useState<Announcement | null>(null);
@@ -33,7 +34,7 @@ export function AnnouncementForm({ adminName, onSuccess }: AnnouncementFormProps
 
   const fetchActive = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/announcements");
+      const res = await fetch(apiBasePath);
       const json = await res.json();
       if (json.success) {
         // 최신 활성 공지 1건만
@@ -74,7 +75,7 @@ export function AnnouncementForm({ adminName, onSuccess }: AnnouncementFormProps
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/admin/announcements", {
+      const res = await fetch(apiBasePath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: content.trim(), createdBy: adminName }),
@@ -99,7 +100,7 @@ export function AnnouncementForm({ adminName, onSuccess }: AnnouncementFormProps
 
     setIsDeactivating(true);
     try {
-      const res = await fetch(`/api/admin/announcements/${activeAnnouncement.id}`, {
+      const res = await fetch(`${apiBasePath}/${activeAnnouncement.id}`, {
         method: "DELETE",
       });
       const json = await res.json();

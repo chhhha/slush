@@ -1,6 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { EmailSettingsView } from "@/components/admin/email-settings-view";
-import { AnnouncementForm } from "@/components/admin/announcement-form";
 import { BanListView } from "@/components/admin/ban-list-view";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { requireAdmin } from "@/lib/admin-guard";
@@ -24,14 +23,6 @@ export default async function SettingsPage() {
     <>
       <AdminHeader />
       <main className="flex-1 mx-auto max-w-4xl px-4 py-8">
-      {/* 공지 설정 */}
-      <section className="mb-10">
-        <h2 className="mb-4 text-lg font-bold tracking-tight">공지사항</h2>
-        <div className="rounded-lg border border-border p-3 sm:p-4">
-          <AnnouncementForm adminName={guard.admin.name} />
-        </div>
-      </section>
-
       {/* 차단 관리 */}
       <section className="mb-10">
         <h2 className="mb-4 text-lg font-bold tracking-tight">품절 알림 차단 관리</h2>

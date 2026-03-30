@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import type { AdminTokenPayload } from "@/types";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const AUTH_COOKIE = "admin_token";
 
@@ -27,7 +28,22 @@ export async function verifyAdminToken(): Promise<AdminTokenPayload | null> {
     const t = cs.get(AUTH_COOKIE)?.value;
     if (!t) return null;
     const { payload } = await jwtVerify(t, getSecret());
-    return payload as unknown as AdminTokenPayload;
+    const tokenPayload = payload as unknown as AdminTokenPayload;
+
+    // admin_token_epoch 이전에 발급된 토큰은 무효화
+    const supabase = createAdminClient();
+    const { data: settings } = await supabase
+      .from("site_settings")
+      .select("admin_token_epoch")
+      .eq("id", "global")
+      .single();
+
+    if (settings?.admin_token_epoch) {
+      const epoch = Math.floor(new Date(settings.admin_token_epoch).getTime() / 1000);
+      if (tokenPayload.iat < epoch) return null;
+    }
+
+    return tokenPayload;
   } catch {
     return null;
   }

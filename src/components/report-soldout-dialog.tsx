@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { collectIdentifiers } from "@/lib/utils/device-id";
 import { fetchApi } from "@/lib/utils/api";
 import type { Machine } from "@/types";
@@ -39,6 +40,7 @@ export function ReportSoldOutDialog({
   reportEnabled = true,
 }: ReportSoldOutDialogProps) {
   const [isPending, setIsPending] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   const handleConfirm = async () => {
     setIsPending(true);
@@ -74,15 +76,15 @@ export function ReportSoldOutDialog({
   if (!reportEnabled) {
     return (
       <AlertDialog open={open} onOpenChange={onOpenChange}>
-        <AlertDialogContent>
+        <AlertDialogContent size="sm">
           <AlertDialogHeader>
             <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950">
               <ShieldAlert className="size-6 text-amber-600 dark:text-amber-400" />
             </div>
-            <AlertDialogTitle className="text-center">
+            <AlertDialogTitle>
               품절 제보가 일시 중지되었어요
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
+            <AlertDialogDescription>
               관리자가 품절 제보 기능을 잠시 멈춰두었어요.
               <br />
               슬러시가 비어있다면, 각 층의 CA 또는 총무에게
@@ -90,7 +92,7 @@ export function ReportSoldOutDialog({
               직접 알려주시면 감사하겠습니다!
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="sm:justify-center">
+          <AlertDialogFooter>
             <AlertDialogAction onClick={() => onOpenChange(false)}>
               확인
             </AlertDialogAction>
@@ -100,17 +102,32 @@ export function ReportSoldOutDialog({
     );
   }
 
+  // 다이얼로그가 닫힐 때 체크박스 초기화
+  const handleOpenChange = (value: boolean) => {
+    if (!value) setConfirmed(false);
+    onOpenChange(value);
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>관리자에게 품절 제보하기</AlertDialogTitle>
           <AlertDialogDescription>
-            헛걸음하게 해서 미안해요 😢
+            제보하시면 이 기계의 상태가 즉시 &lsquo;품절&rsquo;로 변경되며,
             <br />
-            알려주시면 관리자가 빠르게 보충할게요!
+            다른 직원들에게도 품절로 표시됩니다.
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <label className="flex items-center gap-2 cursor-pointer select-none">
+          <Checkbox
+            checked={confirmed}
+            onCheckedChange={(v) => setConfirmed(v === true)}
+          />
+          <span className="text-sm text-muted-foreground">
+            슬러시가 없는 것을 눈으로 확인했어요
+          </span>
+        </label>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>취소</AlertDialogCancel>
           <AlertDialogAction
@@ -119,9 +136,9 @@ export function ReportSoldOutDialog({
               e.preventDefault();
               void handleConfirm();
             }}
-            disabled={isPending}
+            disabled={isPending || !confirmed}
           >
-            {isPending ? "전달하는 중... 🏃" : "네, 알려주세요!"}
+            {isPending ? "전달하는 중... 🏃" : "네, 제보할게요!"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
