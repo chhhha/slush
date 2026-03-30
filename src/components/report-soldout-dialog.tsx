@@ -25,7 +25,7 @@ interface ReportSoldOutDialogProps {
 }
 
 /**
- * 품절 알리기 확인 다이얼로그 (controlled 방식).
+ * 품절 제보하기 확인 다이얼로그 (controlled 방식).
  * - 확인 시 /api/machines/[id]/report-soldout POST 호출
  * - 성공/실패 toast 표시
  */
@@ -70,7 +70,7 @@ export function ReportSoldOutDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>품절 알리기</AlertDialogTitle>
+          <AlertDialogTitle>관리자에게 품절 제보하기</AlertDialogTitle>
           <AlertDialogDescription>
             헛걸음하게 해서 미안해요 😢
             <br />

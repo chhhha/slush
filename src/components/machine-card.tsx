@@ -333,7 +333,7 @@ function TankContent({
             onClick={onReportSoldOut}
           >
             <BellRing className="size-4" />
-            품절 알리기
+            품절 제보하기
           </Button>
         )}
       </div>
