@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pinSchema } from "@/lib/validations";
 import { createAdminToken, setAdminCookie } from "@/lib/auth";
+import {
+  checkRateLimit,
+  getFailureStatus,
+  recordFailure,
+  recordSuccess,
+} from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +19,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { pin, name } = parsed.data;
+    const { pin, name, deviceId } = parsed.data;
+
+    // Rate limit 확인
+    const limit = checkRateLimit(deviceId);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            limit.reason === "global"
+              ? "잠시 후 다시 시도해주세요"
+              : `너무 많은 시도가 있었습니다. ${limit.retryAfterSeconds}초 후 다시 시도해주세요`,
+          retryAfterSeconds: limit.retryAfterSeconds,
+          failCount: limit.failCount,
+          remainingAttempts: limit.remainingAttempts,
+        },
+        { status: 429 }
+      );
+    }
+
     const adminPin = process.env.ADMIN_PIN;
     if (!adminPin) {
       return NextResponse.json(
@@ -23,12 +48,20 @@ export async function POST(request: NextRequest) {
     }
 
     if (pin !== adminPin) {
+      recordFailure(deviceId);
+      const status = getFailureStatus(deviceId);
       return NextResponse.json(
-        { success: false, error: "PIN이 올바르지 않습니다" },
+        {
+          success: false,
+          error: "PIN이 올바르지 않습니다",
+          failCount: status.failCount,
+          remainingAttempts: status.remainingAttempts,
+        },
         { status: 401 }
       );
     }
 
+    recordSuccess(deviceId);
     const token = await createAdminToken(name);
     await setAdminCookie(token);
 

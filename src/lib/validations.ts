@@ -4,6 +4,7 @@ import { COOLING_CONFIG, INPUT_LIMITS } from "./constants";
 export const pinSchema = z.object({
   pin: z.string().min(1, "PIN을 입력해주세요"),
   name: z.string().min(1, "이름을 입력해주세요").max(20, "이름은 20자 이내"),
+  deviceId: z.string().min(1, "기기 식별자가 필요합니다"),
 });
 
 export const statusChangeSchema = z.object({

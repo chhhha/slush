@@ -135,7 +135,12 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      complete_cooling: {
+        Args: { p_machine_id: string };
+        Returns: boolean;
+      };
+    };
     Enums: {
       machine_status: MachineStatus;
       changer_type: ChangerType;
