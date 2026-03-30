@@ -237,6 +237,14 @@ function TankContent({
     preparing: Hourglass,
   } as const;
 
+  const STATUS_DESCRIPTIONS: Record<string, string> = {
+    preparing: "기계를 새로 세팅하고 있어요. 준비가 완료되면 냉각 후 이용할 수 있어요!",
+    cooling: "재료를 넣고 차갑게 얼리는 중이에요. 완료되면 바로 이용가능으로 바뀌어요!",
+    available: "지금 바로 슬러시를 즐길 수 있어요! 품절되었다면 아래 버튼으로 제보해 주세요.",
+    sold_out: "슬러시가 모두 소진되었어요. 재료 보충 후 냉각이 완료되면 다시 이용할 수 있어요.",
+    broken: "기계에 문제가 생겼어요. 관리자가 확인 중이니 조금만 기다려 주세요!",
+  };
+
   // 비활성 상태: 아이콘 중심의 간결한 레이아웃
   if (isInactive) {
     const InactiveIcon = INACTIVE_ICON_MAP[machine.status as keyof typeof INACTIVE_ICON_MAP];
@@ -256,8 +264,8 @@ function TankContent({
               {label}
             </Badge>
           </PopoverTrigger>
-          <PopoverContent className="w-auto text-sm">
-            추후 작성 예정
+          <PopoverContent className="w-auto max-w-[200px] text-sm">
+            {STATUS_DESCRIPTIONS[machine.status]}
           </PopoverContent>
         </Popover>
       </div>
@@ -292,8 +300,8 @@ function TankContent({
               {label}
             </Badge>
           </PopoverTrigger>
-          <PopoverContent className="w-auto text-sm">
-            추후 작성 예정
+          <PopoverContent className="w-auto max-w-[200px] text-sm">
+            {STATUS_DESCRIPTIONS[machine.status]}
           </PopoverContent>
         </Popover>
       </div>

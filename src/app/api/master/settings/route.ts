@@ -38,19 +38,30 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 
-  const body = (await req.json()) as { report_soldout_enabled?: boolean };
+  const body = (await req.json()) as {
+    report_soldout_enabled?: boolean;
+    admin_login_strict?: boolean;
+  };
 
-  if (typeof body.report_soldout_enabled !== "boolean") {
+  const updates: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
+
+  if (typeof body.report_soldout_enabled === "boolean") {
+    updates.report_soldout_enabled = body.report_soldout_enabled;
+  }
+  if (typeof body.admin_login_strict === "boolean") {
+    updates.admin_login_strict = body.admin_login_strict;
+  }
+
+  if (Object.keys(updates).length <= 1) {
     return NextResponse.json({ success: false, error: "잘못된 요청입니다." }, { status: 400 });
   }
 
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("site_settings")
-    .update({
-      report_soldout_enabled: body.report_soldout_enabled,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updates)
     .eq("id", "global");
 
   if (error) {

@@ -7,6 +7,7 @@ import {
   recordFailure,
   recordSuccess,
 } from "@/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +60,36 @@ export async function POST(request: NextRequest) {
         },
         { status: 401 }
       );
+    }
+
+    // 관리자 로그인 강화 모드 확인
+    const supabase = createAdminClient();
+    const { data: settings } = await supabase
+      .from("site_settings")
+      .select("admin_login_strict")
+      .eq("id", "global")
+      .single();
+
+    if (settings?.admin_login_strict) {
+      const { data: allowed } = await supabase
+        .from("admin_allowed_names")
+        .select("id")
+        .eq("name", name)
+        .single();
+
+      if (!allowed) {
+        recordFailure(deviceId);
+        const status = getFailureStatus(deviceId);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "등록되지 않은 이름입니다",
+            failCount: status.failCount,
+            remainingAttempts: status.remainingAttempts,
+          },
+          { status: 403 }
+        );
+      }
     }
 
     recordSuccess(deviceId);

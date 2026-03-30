@@ -137,14 +137,29 @@ export interface Database {
         Row: {
           id: string;
           report_soldout_enabled: boolean;
+          admin_login_strict: boolean;
           updated_at: string;
         };
         Insert: {
           id?: string;
           report_soldout_enabled?: boolean;
+          admin_login_strict?: boolean;
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
+        Relationships: [];
+      };
+      admin_allowed_names: {
+        Row: {
+          id: number;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          name: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["admin_allowed_names"]["Insert"]>;
         Relationships: [];
       };
     };

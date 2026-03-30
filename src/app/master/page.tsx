@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Shield, Lock, Power } from "lucide-react";
+import { Shield, Lock, Power, ShieldCheck, UserPlus, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,6 +16,12 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+interface AllowedName {
+  id: number;
+  name: string;
+  created_at: string;
+}
+
 export default function MasterPage() {
   const [authed, setAuthed] = useState(false);
   const [pin, setPin] = useState("");
@@ -24,6 +30,14 @@ export default function MasterPage() {
   // 설정 상태
   const [reportEnabled, setReportEnabled] = useState(true);
   const [isToggling, setIsToggling] = useState(false);
+
+  // 관리자 로그인 강화
+  const [loginStrict, setLoginStrict] = useState(false);
+  const [isTogglingStrict, setIsTogglingStrict] = useState(false);
+  const [allowedNames, setAllowedNames] = useState<AllowedName[]>([]);
+  const [newName, setNewName] = useState("");
+  const [isAddingName, setIsAddingName] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // PIN 인증
   const handleLogin = async (e: React.FormEvent) => {
@@ -60,6 +74,20 @@ export default function MasterPage() {
       const data = await res.json();
       if (data.success) {
         setReportEnabled(data.data.report_soldout_enabled);
+        setLoginStrict(data.data.admin_login_strict);
+      }
+    } catch {
+      // 무시
+    }
+  }, []);
+
+  // 허용 이름 목록 조회
+  const fetchAllowedNames = useCallback(async () => {
+    try {
+      const res = await fetch("/api/master/allowed-names");
+      const data = await res.json();
+      if (data.success) {
+        setAllowedNames(data.data);
       }
     } catch {
       // 무시
@@ -67,8 +95,11 @@ export default function MasterPage() {
   }, []);
 
   useEffect(() => {
-    if (authed) void fetchSettings();
-  }, [authed, fetchSettings]);
+    if (authed) {
+      void fetchSettings();
+      void fetchAllowedNames();
+    }
+  }, [authed, fetchSettings, fetchAllowedNames]);
 
   // 토글
   const handleToggle = async (enabled: boolean) => {
@@ -94,6 +125,81 @@ export default function MasterPage() {
       toast.error("서버 연결에 실패했습니다");
     } finally {
       setIsToggling(false);
+    }
+  };
+
+  // 관리자 로그인 강화 토글
+  const handleToggleStrict = async (enabled: boolean) => {
+    setIsTogglingStrict(true);
+    try {
+      const res = await fetch("/api/master/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ admin_login_strict: enabled }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLoginStrict(enabled);
+        toast.success(
+          enabled
+            ? "관리자 로그인 강화가 활성화되었습니다"
+            : "관리자 로그인 강화가 비활성화되었습니다",
+        );
+      } else {
+        toast.error(data.error ?? "설정 변경에 실패했습니다");
+      }
+    } catch {
+      toast.error("서버 연결에 실패했습니다");
+    } finally {
+      setIsTogglingStrict(false);
+    }
+  };
+
+  // 허용 이름 추가
+  const handleAddName = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+    setIsAddingName(true);
+    try {
+      const res = await fetch("/api/master/allowed-names", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAllowedNames((prev) => [...prev, data.data]);
+        setNewName("");
+        toast.success(`"${trimmed}" 이름이 추가되었습니다`);
+      } else {
+        toast.error(data.error ?? "추가에 실패했습니다");
+      }
+    } catch {
+      toast.error("서버 연결에 실패했습니다");
+    } finally {
+      setIsAddingName(false);
+    }
+  };
+
+  // 허용 이름 삭제
+  const handleDeleteName = async (id: number, name: string) => {
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/master/allowed-names?id=${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAllowedNames((prev) => prev.filter((n) => n.id !== id));
+        toast.success(`"${name}" 이름이 삭제되었습니다`);
+      } else {
+        toast.error(data.error ?? "삭제에 실패했습니다");
+      }
+    } catch {
+      toast.error("서버 연결에 실패했습니다");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -208,6 +314,106 @@ export default function MasterPage() {
                   현재 모든 사용자의 품절 제보가 차단된 상태입니다. 직원
                   페이지에서 버튼 클릭 시 안내 메시지가 표시됩니다.
                 </p>
+              </div>
+            )}
+          </div>
+
+          {/* 관리자 로그인 강화 토글 */}
+          <div className="rounded-lg border p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-full",
+                    loginStrict
+                      ? "bg-green-100 dark:bg-green-950"
+                      : "bg-gray-100 dark:bg-gray-900",
+                  )}
+                >
+                  <ShieldCheck
+                    className={cn(
+                      "size-5",
+                      loginStrict
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-gray-500 dark:text-gray-400",
+                    )}
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">관리자 로그인 강화</p>
+                  <p className="text-xs text-muted-foreground">
+                    {loginStrict
+                      ? "등록된 이름만 관리자 로그인 가능"
+                      : "모든 이름으로 관리자 로그인 가능"}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={loginStrict}
+                onCheckedChange={handleToggleStrict}
+                disabled={isTogglingStrict}
+              />
+            </div>
+
+            {loginStrict && (
+              <div className="space-y-3">
+                <div className="rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-3 py-2">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    아래 목록에 등록된 이름만 관리자 로그인이 가능합니다. PIN이
+                    맞더라도 이름이 등록되어 있지 않으면 로그인이 거부됩니다.
+                  </p>
+                </div>
+
+                {/* 이름 추가 폼 */}
+                <form onSubmit={handleAddName} className="flex gap-2">
+                  <div className="relative flex-1">
+                    <UserPlus className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="이름 입력"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      maxLength={20}
+                      className="pl-8 h-9 text-sm"
+                      disabled={isAddingName}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="h-9"
+                    disabled={isAddingName || !newName.trim()}
+                  >
+                    {isAddingName ? "추가 중..." : "추가"}
+                  </Button>
+                </form>
+
+                {/* 등록된 이름 목록 */}
+                {allowedNames.length === 0 ? (
+                  <p className="text-xs text-muted-foreground text-center py-2">
+                    등록된 이름이 없습니다. 이름을 추가해주세요.
+                  </p>
+                ) : (
+                  <div className="space-y-1.5">
+                    {allowedNames.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between rounded-md border px-3 py-2"
+                      >
+                        <span className="text-sm font-medium">{item.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-7 text-muted-foreground hover:text-destructive"
+                          onClick={() => handleDeleteName(item.id, item.name)}
+                          disabled={deletingId === item.id}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

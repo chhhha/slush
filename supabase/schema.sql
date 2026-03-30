@@ -105,7 +105,15 @@ CREATE POLICY "announcements_select_all" ON announcements FOR SELECT USING (true
 CREATE TABLE site_settings (
   id TEXT PRIMARY KEY DEFAULT 'global' CHECK (id = 'global'),
   report_soldout_enabled BOOLEAN NOT NULL DEFAULT true,
+  admin_login_strict BOOLEAN NOT NULL DEFAULT false,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- 8) admin_allowed_names: 관리자 로그인 강화 시 허용된 이름 목록
+CREATE TABLE admin_allowed_names (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- site_settings 초기 데이터
@@ -114,6 +122,8 @@ INSERT INTO site_settings (id) VALUES ('global');
 -- RLS
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "site_settings_select_all" ON site_settings FOR SELECT USING (true);
+
+ALTER TABLE admin_allowed_names ENABLE ROW LEVEL SECURITY;
 
 -- Realtime 활성화
 ALTER PUBLICATION supabase_realtime ADD TABLE machines;
