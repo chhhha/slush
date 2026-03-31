@@ -31,6 +31,8 @@ export async function verifyMasterToken(): Promise<MasterTokenPayload | null> {
     if (!t) return null;
     const { payload } = await jwtVerify(t, getSecret());
     const tokenPayload = payload as unknown as MasterTokenPayload;
+    // admin JWT를 master_token 쿠키에 복사하는 권한 상승 공격 방지
+    if (tokenPayload.role !== "master") return null;
     return tokenPayload;
   } catch {
     return null;
