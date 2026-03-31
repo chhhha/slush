@@ -26,10 +26,16 @@ export function AdminHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-5xl items-center px-4">
         <div className="flex flex-1 items-center">
-          <Link href="/admin" className="mr-2 inline-flex items-center gap-1.5 font-bold text-sm sm:text-base tracking-tight text-primary hover:opacity-80 transition-opacity">
-            <CupSoda className="size-4" />
-            슬러시 관리자
-          </Link>
+          <div className="mr-2 inline-flex items-center gap-1.5 text-sm sm:text-base tracking-tight">
+            <CupSoda className="size-4 text-primary" />
+            <Link href="/admin" className="font-bold text-primary hover:opacity-80 transition-opacity">
+              관리자
+            </Link>
+            <span className="text-muted-foreground">·</span>
+            <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+              현황판
+            </Link>
+          </div>
         </div>
         <nav className="flex items-center gap-1 sm:gap-1.5">
           <Link
@@ -60,13 +66,6 @@ export function AdminHeader() {
               {adminName}
             </span>
           )}
-          <Link
-            href="/"
-            className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "min-h-9 min-w-9")}
-            title="현황판"
-          >
-            <CupSoda className="size-4" />
-          </Link>
           <ThemeToggle />
           <Button
             variant="ghost"
