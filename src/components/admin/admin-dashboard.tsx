@@ -112,9 +112,10 @@ export function AdminDashboard({ initialMachines }: AdminDashboardProps) {
                   {floor}층
                 </h3>
                 <div className="relative z-10 ml-auto flex items-center gap-1.5">
-                  <Bell className="size-3.5 text-muted-foreground" />
+                  <Bell className="size-3 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">품절 알림 (브라우저)</span>
                   <Switch
+                    size="sm"
                     checked={enabledFloors.has(floor)}
                     onCheckedChange={() => void handleToggleFloor(floor)}
                   />
