@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-/** 마스터 인증 확인 */
-function isMasterAuthed(req: NextRequest): boolean {
-  return req.cookies.get("master_authed")?.value === "true";
-}
+import { verifyMasterToken } from "@/lib/master-guard";
 
 /**
  * GET /api/master/allowed-names
  * 허용된 관리자 이름 목록 조회.
  */
 export async function GET(req: NextRequest) {
-  if (!isMasterAuthed(req)) {
+  const token = await verifyMasterToken();
+  if (!token) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 
@@ -33,7 +30,8 @@ export async function GET(req: NextRequest) {
  * 허용 이름 추가.
  */
 export async function POST(req: NextRequest) {
-  if (!isMasterAuthed(req)) {
+  const token = await verifyMasterToken();
+  if (!token) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 
@@ -66,7 +64,8 @@ export async function POST(req: NextRequest) {
  * 허용 이름 삭제 (id 기반).
  */
 export async function DELETE(req: NextRequest) {
-  if (!isMasterAuthed(req)) {
+  const token = await verifyMasterToken();
+  if (!token) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 

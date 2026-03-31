@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-/** 마스터 인증 확인 */
-function isMasterAuthed(req: NextRequest): boolean {
-  return req.cookies.get("master_authed")?.value === "true";
-}
+import { verifyMasterToken } from "@/lib/master-guard";
 
 // DELETE: 공지 비활성화
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isMasterAuthed(request)) {
+  const token = await verifyMasterToken();
+  if (!token) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 

@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { announcementSchema } from "@/lib/validations";
-
-/** 마스터 인증 확인 */
-function isMasterAuthed(req: NextRequest): boolean {
-  return req.cookies.get("master_authed")?.value === "true";
-}
+import { verifyMasterToken } from "@/lib/master-guard";
 
 // POST: 새 공지 생성 (기존 활성 공지 모두 비활성화 후 INSERT)
 export async function POST(request: NextRequest) {
-  if (!isMasterAuthed(request)) {
+  const token = await verifyMasterToken();
+  if (!token) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 
@@ -64,7 +61,8 @@ export async function POST(request: NextRequest) {
 
 // GET: 활성 공지 조회
 export async function GET(request: NextRequest) {
-  if (!isMasterAuthed(request)) {
+  const token = await verifyMasterToken();
+  if (!token) {
     return NextResponse.json({ success: false, error: "인증 필요" }, { status: 401 });
   }
 
