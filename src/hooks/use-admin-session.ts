@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 interface AdminSession {
   adminName: string;
   isLoading: boolean;
-  /** 서버에서 세션을 다시 검증 */
-  refresh: () => Promise<void>;
 }
 
 /**
@@ -39,5 +37,5 @@ export function useAdminSession(): AdminSession {
     verify();
   }, [verify]);
 
-  return { adminName, isLoading, refresh: verify };
+  return { adminName, isLoading };
 }
