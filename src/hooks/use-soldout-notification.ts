@@ -15,7 +15,7 @@ import { POSITION_LABELS } from "@/lib/constants";
  */
 export function useSoldoutNotification(
   machines: Machine[],
-  notify: (title: string, body?: string) => void,
+  notify: (title: string, body?: string, floor?: number) => void,
 ) {
   const prevStatusRef = useRef<Map<string, string>>(new Map());
 
@@ -34,7 +34,8 @@ export function useSoldoutNotification(
         const positionLabel = POSITION_LABELS[machine.position];
         notify(
           `[슬러시 일시품절] ${machine.floor}층 ${positionLabel}`,
-          `${machine.flavor} 슬러시가 일시품절되었습니다`
+          `${machine.flavor} 슬러시가 일시품절되었습니다`,
+          machine.floor
         );
       }
 

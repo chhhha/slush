@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       from: process.env.RESEND_FROM_EMAIL ?? "slush@dasw.kr",
       to: emailList,
       subject,
-      text: `${machine.floor}층 ${positionLabel}(${machine.flavor}) 슬러시가 일시품절되었습니다.`,
+      text: `${machine.floor}층 ${positionLabel}(${machine.flavor}) 의 일시품절 제보가 들어왔습니다.`,
     });
 
     if (sendError) {

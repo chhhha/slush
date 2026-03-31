@@ -159,7 +159,7 @@ export function MachineEditForm({ machine }: MachineEditFormProps) {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("세척 완료 처리되었습니다");
+        toast.success("세척 시간이 초기화 되었습니다.");
         setLastCleanedAt(new Date().toISOString());
       } else {
         toast.error(data.error ?? "처리에 실패했습니다");
@@ -272,13 +272,13 @@ export function MachineEditForm({ machine }: MachineEditFormProps) {
             disabled={isCleaning}
             className="w-full"
           >
-            {isCleaning ? "처리 중..." : "세척 완료"}
+            {isCleaning ? "처리 중..." : "세척 시간 초기화"}
           </Button>
 
           <AlertDialog open={showCleanConfirm} onOpenChange={setShowCleanConfirm}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>세척 완료 기록</AlertDialogTitle>
+                <AlertDialogTitle>세척 시간 초기화</AlertDialogTitle>
                 <AlertDialogDescription>
                   지금 세척을 완료한 것으로 기록할까요?
                 </AlertDialogDescription>

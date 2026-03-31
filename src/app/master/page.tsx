@@ -427,24 +427,25 @@ export default function MasterPage() {
                     등록된 이름이 없습니다. 이름을 추가해주세요.
                   </p>
                 ) : (
-                  <div className="space-y-1.5">
-                    {allowedNames.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center justify-between rounded-md border px-3 py-2"
-                      >
-                        <span className="text-sm font-medium">{item.name}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-7 text-muted-foreground hover:text-destructive"
-                          onClick={() => handleDeleteName(item.id, item.name)}
-                          disabled={deletingId === item.id}
+                  <div className="max-h-40 overflow-y-auto">
+                    <div className="flex flex-wrap gap-1.5">
+                      {allowedNames.map((item) => (
+                        <span
+                          key={item.id}
+                          className="inline-flex items-center gap-1 rounded-full border bg-muted/50 px-2.5 py-1 text-sm font-medium"
                         >
-                          <X className="size-4" />
-                        </Button>
-                      </div>
-                    ))}
+                          {item.name}
+                          <button
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-full size-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            onClick={() => handleDeleteName(item.id, item.name)}
+                            disabled={deletingId === item.id}
+                          >
+                            <X className="size-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

@@ -93,7 +93,7 @@ export function ReportSoldOutDialog({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => onOpenChange(false)}>
+            <AlertDialogAction className="col-span-full" onClick={() => onOpenChange(false)}>
               확인
             </AlertDialogAction>
           </AlertDialogFooter>

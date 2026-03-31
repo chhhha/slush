@@ -48,12 +48,12 @@ export async function POST(
 
   if (updateError) {
     return NextResponse.json(
-      { success: false, error: "세척 완료 처리에 실패했습니다" },
+      { success: false, error: "세척 시간 초기화에 실패했습니다" },
       { status: 500 }
     );
   }
 
-  // 상태 로그 기록 (세척 완료 note)
+  // 상태 로그 기록 (세척 시간 초기화 note)
   await supabase.from("status_logs").insert({
     machine_id: id,
     previous_status: current.status,
@@ -62,7 +62,7 @@ export async function POST(
     changed_by_name: adminName,
     device_id: null,
     ip_address: null,
-    note: "세척 완료",
+    note: "세척 시간 초기화",
   });
 
   return NextResponse.json({ success: true });

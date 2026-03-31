@@ -238,7 +238,7 @@ function TankContent({
   } as const;
 
   const STATUS_DESCRIPTIONS: Record<string, string> = {
-    preparing: "현재 슬러시가 제공되지 않는 상태예요! (재료 소진, 마감, 담당자 부재, 기계 세척 등)",
+    preparing: "현재 슬러시가 제공되지 않는 상태예요! (재료 소진, 오늘 마감, 담당자 부재, 기계 세척 등)",
     cooling: "음료를 차갑게 얼리는 중이에요. 이용 가능으로 변경된 후에 이용해주세요!",
     available: "지금 바로 슬러시를 즐길 수 있어요! 품절되었다면 아래 버튼으로 제보해 주세요.",
     sold_out: "슬러시가 모두 소진되었다고 제보가 들어왔어요! 관리자가 상태를 확인하러 가야해요.",

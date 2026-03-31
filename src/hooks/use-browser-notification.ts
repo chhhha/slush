@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const ENABLED_KEY = "slush_browser_notification_enabled";
+const ENABLED_FLOORS_KEY = "slush_notif_enabled_floors";
+const OLD_ENABLED_KEY = "slush_browser_notification_enabled";
 
 /**
  * SW 등록 후 registration을 캐싱.
@@ -48,24 +49,49 @@ async function showNotification(title: string, options?: NotificationOptions) {
   }
 }
 
+/** localStorage에서 알림 활성화된 층 목록 조회 (기존 전체 토글에서 자동 마이그레이션) */
+function getEnabledFloors(): Set<number> {
+  if (typeof window === "undefined") return new Set();
+  const stored = localStorage.getItem(ENABLED_FLOORS_KEY);
+  if (stored) {
+    try {
+      return new Set(JSON.parse(stored) as number[]);
+    } catch {
+      return new Set();
+    }
+  }
+  // 기존 전체 토글에서 마이그레이션
+  const oldValue = localStorage.getItem(OLD_ENABLED_KEY);
+  if (oldValue === "true") {
+    const allFloors = new Set([2, 3, 4]);
+    localStorage.setItem(ENABLED_FLOORS_KEY, JSON.stringify([...allFloors]));
+    localStorage.removeItem(OLD_ENABLED_KEY);
+    return allFloors;
+  }
+  localStorage.removeItem(OLD_ENABLED_KEY);
+  return new Set();
+}
+
+function saveEnabledFloors(floors: Set<number>) {
+  localStorage.setItem(ENABLED_FLOORS_KEY, JSON.stringify([...floors]));
+}
+
 /**
- * 브라우저 Notification API 래퍼 훅.
+ * 브라우저 Notification API 래퍼 훅 (층별 설정 지원).
  * Service Worker 기반으로 동작하여 모바일 브라우저 호환성 확보.
  */
 export function useBrowserNotification() {
-  // SSR과 클라이언트 초기값을 false로 통일하여 hydration 불일치 방지
-  const [isEnabled, setIsEnabled] = useState(false);
-  const isEnabledRef = useRef(false);
+  // SSR과 클라이언트 초기값을 빈 Set으로 통일하여 hydration 불일치 방지
+  const [enabledFloors, setEnabledFloors] = useState<Set<number>>(new Set());
+  const enabledFloorsRef = useRef<Set<number>>(new Set());
 
   // 클라이언트 마운트 후 localStorage에서 실제 상태 복원 + SW 등록
   useEffect(() => {
     if ("Notification" in window) {
-      const stored = localStorage.getItem(ENABLED_KEY);
-      const enabled = stored === "true" && Notification.permission === "granted";
-      setIsEnabled(enabled);
-      isEnabledRef.current = enabled;
+      const floors = Notification.permission === "granted" ? getEnabledFloors() : new Set<number>();
+      setEnabledFloors(floors);
+      enabledFloorsRef.current = floors;
     }
-    // SW 미리 등록
     void ensureSW();
   }, []);
 
@@ -73,10 +99,9 @@ export function useBrowserNotification() {
   useEffect(() => {
     const syncState = () => {
       if ("Notification" in window) {
-        const stored = localStorage.getItem(ENABLED_KEY);
-        const enabled = stored === "true" && Notification.permission === "granted";
-        setIsEnabled(enabled);
-        isEnabledRef.current = enabled;
+        const floors = Notification.permission === "granted" ? getEnabledFloors() : new Set<number>();
+        setEnabledFloors(floors);
+        enabledFloorsRef.current = floors;
       }
     };
     window.addEventListener("slush-notif-sync", syncState);
@@ -84,16 +109,20 @@ export function useBrowserNotification() {
   }, []);
 
   useEffect(() => {
-    isEnabledRef.current = isEnabled;
-  }, [isEnabled]);
+    enabledFloorsRef.current = enabledFloors;
+  }, [enabledFloors]);
 
-  const toggle = useCallback(async (): Promise<"enabled" | "disabled" | "denied" | "unsupported"> => {
+  const toggleFloor = useCallback(async (floor: number): Promise<"enabled" | "disabled" | "denied" | "unsupported"> => {
     if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
 
-    if (isEnabledRef.current) {
-      localStorage.setItem(ENABLED_KEY, "false");
-      isEnabledRef.current = false;
-      setIsEnabled(false);
+    const current = getEnabledFloors();
+
+    if (current.has(floor)) {
+      current.delete(floor);
+      saveEnabledFloors(current);
+      const next = new Set(current);
+      setEnabledFloors(next);
+      enabledFloorsRef.current = next;
       window.dispatchEvent(new Event("slush-notif-sync"));
       return "disabled";
     }
@@ -105,9 +134,11 @@ export function useBrowserNotification() {
     }
 
     if (Notification.permission === "granted") {
-      localStorage.setItem(ENABLED_KEY, "true");
-      isEnabledRef.current = true;
-      setIsEnabled(true);
+      current.add(floor);
+      saveEnabledFloors(current);
+      const next = new Set(current);
+      setEnabledFloors(next);
+      enabledFloorsRef.current = next;
       window.dispatchEvent(new Event("slush-notif-sync"));
       return "enabled";
     }
@@ -115,13 +146,16 @@ export function useBrowserNotification() {
     return "denied";
   }, []);
 
-  const notify = useCallback((title: string, body?: string) => {
-    if (!isEnabledRef.current) return;
+  const notify = useCallback((title: string, body?: string, floor?: number) => {
     if (typeof window === "undefined" || !("Notification" in window)) return;
     if (Notification.permission !== "granted") return;
+    if (enabledFloorsRef.current.size === 0) return;
+    if (floor !== undefined && !enabledFloorsRef.current.has(floor)) return;
 
     void showNotification(title, { body, icon: "/favicon.ico" });
   }, []);
 
-  return { isEnabled, toggle, notify, showNotification };
+  const isEnabled = enabledFloors.size > 0;
+
+  return { isEnabled, enabledFloors, toggleFloor, notify, showNotification };
 }
