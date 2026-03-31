@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, ClipboardList, Settings, LogOut, CupSoda } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Settings, LogOut, CupSoda, Monitor } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { toast } from "sonner";
@@ -32,7 +32,8 @@ export function AdminHeader() {
               관리자
             </Link>
             <span className="text-muted-foreground">·</span>
-            <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+              <Monitor className="size-3.5" />
               현황판
             </Link>
           </div>
