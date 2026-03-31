@@ -46,7 +46,7 @@ export async function PUT(
     const { flavor, adminName } = flavorParsed.data;
     const { error } = await supabase
       .from("machines")
-      .update({ flavor, updated_by: adminName, updated_at: new Date().toISOString() })
+      .update({ flavor, updated_by: adminName })
       .eq("id", id);
 
     if (error) {
