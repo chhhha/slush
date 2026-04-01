@@ -252,17 +252,17 @@ function FaqItem({
   };
 
   return (
-    <div className="rounded-lg border transition-colors">
+    <div className="overflow-hidden rounded-lg border transition-colors">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left cursor-pointer"
+        className="flex w-full items-center justify-between gap-2 overflow-hidden px-3 py-2.5 text-left cursor-pointer"
         onClick={handleToggle}
       >
         <span className="flex min-w-0 flex-1 items-center gap-2">
           {isUnread && (
             <span className="size-1.5 shrink-0 rounded-full bg-red-500" />
           )}
-          <span className="min-w-0 flex-1 text-sm font-medium leading-snug break-words">{faq.question}</span>
+          <span className="min-w-0 flex-1 text-sm font-medium leading-snug break-all">{faq.question}</span>
         </span>
         <ChevronDown
           className={cn(
