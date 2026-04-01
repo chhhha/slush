@@ -2,12 +2,13 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { CupSoda, Info, Wrench } from "lucide-react";
+import { CupSoda, HelpCircle, Info, Wrench } from "lucide-react";
 import { useMachines } from "@/hooks/use-machines";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { FloorMachineCard } from "@/components/machine-card";
 import { ReportSoldOutDialog } from "@/components/report-soldout-dialog";
 import { AnnouncementPopup } from "@/components/announcement-popup";
+import { WelcomeGuide } from "@/components/welcome-guide";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Popover,
@@ -123,6 +124,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
   const [reportTarget, setReportTarget] = useState<Machine | null>(null);
   const [isWiggling, setIsWiggling] = useState(false);
   const [greeting, setGreeting] = useState("");
+  const [guideOpen, setGuideOpen] = useState(false);
 
   useEffect(() => {
     setGreeting(getGreeting());
@@ -154,6 +156,13 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
             </h1>
           </button>
           <div className="flex items-center gap-1">
+            <button
+              type="button"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              onClick={() => setGuideOpen(true)}
+            >
+              <HelpCircle className="size-5" />
+            </button>
             <Link href="/admin" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors">
               <Wrench className="size-5" />
             </Link>
@@ -187,6 +196,9 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
 
       {/* 공지사항 팝업 */}
       <AnnouncementPopup />
+
+      {/* 첫 방문 가이드 (공지보다 위에 표시되도록 나중에 렌더링) */}
+      <WelcomeGuide externalOpen={guideOpen} onExternalOpenChange={setGuideOpen} />
 
       {/* 메인 콘텐츠 — 층별 통합 카드 */}
       <main className="flex-1 px-4 py-6">
