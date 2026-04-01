@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CupSoda, HelpCircle, Info, Wrench } from "lucide-react";
 import { useMachines } from "@/hooks/use-machines";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useFaqNotifications } from "@/hooks/use-faq-notifications";
 import { FloorMachineCard } from "@/components/machine-card";
 import { ReportSoldOutDialog } from "@/components/report-soldout-dialog";
 import { AnnouncementPopup } from "@/components/announcement-popup";
@@ -121,6 +122,7 @@ interface EmployeeViewProps {
 export function EmployeeView({ initialMachines }: EmployeeViewProps) {
   const { machines } = useMachines(initialMachines);
   const { report_soldout_enabled } = useSiteSettings();
+  const faqNotifications = useFaqNotifications();
   const [reportTarget, setReportTarget] = useState<Machine | null>(null);
   const [isWiggling, setIsWiggling] = useState(false);
   const [greeting, setGreeting] = useState("");
@@ -181,10 +183,13 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
           <div className="flex items-center gap-1">
             <button
               type="button"
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               onClick={() => setGuideOpen(true)}
             >
               <HelpCircle className="size-5" />
+              {faqNotifications.hasUnreadFaqs && (
+                <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
+              )}
             </button>
             <Link href="/admin" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors">
               <Wrench className="size-5" />
@@ -221,7 +226,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
       <AnnouncementPopup />
 
       {/* 첫 방문 가이드 (공지보다 위에 표시되도록 나중에 렌더링) */}
-      <WelcomeGuide externalOpen={guideOpen} onExternalOpenChange={setGuideOpen} />
+      <WelcomeGuide externalOpen={guideOpen} onExternalOpenChange={setGuideOpen} faqNotifications={faqNotifications} />
 
       {/* 메인 콘텐츠 — 층별 통합 카드 */}
       <main className="flex-1 px-4 py-6">

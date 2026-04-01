@@ -24,6 +24,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Faq } from "@/types";
+import type { useFaqNotifications } from "@/hooks/use-faq-notifications";
+
+type FaqNotifications = ReturnType<typeof useFaqNotifications>;
 
 const GUIDE_SEEN_KEY = "slush_welcome_guide_seen";
 
@@ -232,17 +235,35 @@ function GuideView({ onClose }: { onClose: () => void }) {
 
 // ─── FAQ 뷰 ───
 
-function FaqItem({ faq }: { faq: Faq }) {
+function FaqItem({
+  faq,
+  isUnread,
+  onRead,
+}: {
+  faq: Faq;
+  isUnread: boolean;
+  onRead: (id: number) => void;
+}) {
   const [open, setOpen] = useState(false);
+
+  const handleToggle = () => {
+    if (!open && isUnread) onRead(faq.id);
+    setOpen(!open);
+  };
 
   return (
     <div className="rounded-lg border transition-colors">
       <button
         type="button"
         className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left cursor-pointer"
-        onClick={() => setOpen(!open)}
+        onClick={handleToggle}
       >
-        <span className="min-w-0 flex-1 text-sm font-medium leading-snug break-words">{faq.question}</span>
+        <span className="flex min-w-0 flex-1 items-center gap-2">
+          {isUnread && (
+            <span className="size-1.5 shrink-0 rounded-full bg-red-500" />
+          )}
+          <span className="min-w-0 flex-1 text-sm font-medium leading-snug break-words">{faq.question}</span>
+        </span>
         <ChevronDown
           className={cn(
             "size-4 shrink-0 text-muted-foreground transition-transform duration-200",
@@ -266,19 +287,9 @@ function FaqItem({ faq }: { faq: Faq }) {
   );
 }
 
-function FaqView() {
-  const [faqs, setFaqs] = useState<Faq[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/faqs")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setFaqs(data.data);
-      })
-      .catch(() => {})
-      .finally(() => setIsLoading(false));
-  }, []);
+function FaqView({ notifications }: { notifications: FaqNotifications }) {
+  const { faqs, isLoading, unreadFaqIds, hasUnreadFaqs, markAsRead, markAllAsRead } = notifications;
+  const unreadSet = new Set(unreadFaqIds);
 
   if (isLoading) {
     return (
@@ -300,10 +311,28 @@ function FaqView() {
   }
 
   return (
-    <div className="max-h-[50vh] space-y-2 overflow-y-auto pr-1">
-      {faqs.map((faq) => (
-        <FaqItem key={faq.id} faq={faq} />
-      ))}
+    <div className="space-y-2">
+      {hasUnreadFaqs && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            onClick={markAllAsRead}
+          >
+            모두 읽음 처리
+          </button>
+        </div>
+      )}
+      <div className="max-h-[50vh] space-y-2 overflow-y-auto pr-1">
+        {faqs.map((faq) => (
+          <FaqItem
+            key={faq.id}
+            faq={faq}
+            isUnread={unreadSet.has(faq.id)}
+            onRead={markAsRead}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -312,7 +341,13 @@ function FaqView() {
 
 type HelpTab = "menu" | "guide" | "faq";
 
-function MenuView({ onSelect }: { onSelect: (tab: "guide" | "faq") => void }) {
+function MenuView({
+  onSelect,
+  hasUnreadFaqs,
+}: {
+  onSelect: (tab: "guide" | "faq") => void;
+  hasUnreadFaqs: boolean;
+}) {
   return (
     <div className="space-y-3 py-2">
       <p className="text-center text-sm text-muted-foreground">
@@ -334,9 +369,12 @@ function MenuView({ onSelect }: { onSelect: (tab: "guide" | "faq") => void }) {
         </button>
         <button
           type="button"
-          className="flex flex-col items-center gap-2.5 rounded-xl border p-4 transition-colors hover:bg-muted/50 cursor-pointer"
+          className="relative flex flex-col items-center gap-2.5 rounded-xl border p-4 transition-colors hover:bg-muted/50 cursor-pointer"
           onClick={() => onSelect("faq")}
         >
+          {hasUnreadFaqs && (
+            <span className="absolute top-2.5 right-2.5 size-2 rounded-full bg-red-500" />
+          )}
           <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10">
             <HelpCircle className="size-6 text-primary" />
           </div>
@@ -356,9 +394,11 @@ interface WelcomeGuideProps {
   /** 외부에서 가이드를 열기 위한 트리거 */
   externalOpen?: boolean;
   onExternalOpenChange?: (open: boolean) => void;
+  /** FAQ 알림 상태 (employee-view에서 전달) */
+  faqNotifications?: FaqNotifications;
 }
 
-export function WelcomeGuide({ externalOpen, onExternalOpenChange }: WelcomeGuideProps) {
+export function WelcomeGuide({ externalOpen, onExternalOpenChange, faqNotifications }: WelcomeGuideProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [tab, setTab] = useState<HelpTab>("menu");
@@ -424,9 +464,9 @@ export function WelcomeGuide({ externalOpen, onExternalOpenChange }: WelcomeGuid
               </div>
             )}
 
-            {tab === "menu" && <MenuView onSelect={setTab} />}
+            {tab === "menu" && <MenuView onSelect={setTab} hasUnreadFaqs={faqNotifications?.hasUnreadFaqs ?? false} />}
             {tab === "guide" && <GuideView onClose={handleClose} />}
-            {tab === "faq" && <FaqView />}
+            {tab === "faq" && faqNotifications && <FaqView notifications={faqNotifications} />}
           </>
         )}
       </DialogContent>

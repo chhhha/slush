@@ -130,3 +130,5 @@ ALTER TABLE admin_allowed_names ENABLE ROW LEVEL SECURITY;
 ALTER PUBLICATION supabase_realtime ADD TABLE machines;
 ALTER PUBLICATION supabase_realtime ADD TABLE announcements;
 ALTER PUBLICATION supabase_realtime ADD TABLE site_settings;
+CREATE POLICY "faqs_select_all" ON faqs FOR SELECT USING (true);
+ALTER PUBLICATION supabase_realtime ADD TABLE faqs;
