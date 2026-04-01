@@ -50,7 +50,7 @@ const STATUS_ITEMS = [
   {
     icon: Snowflake,
     label: "냉각중",
-    desc: "시원해지는 중이예요. 조금만 기다려 주세요!",
+    desc: "아직 슬러시가 아니예요. 조금만 더 기다려주세요!",
     color: "text-blue-600 dark:text-blue-400",
     bg: "bg-blue-50 dark:bg-sky-950",
   },
@@ -64,7 +64,7 @@ const STATUS_ITEMS = [
   {
     icon: AlertTriangle,
     label: "일시품절",
-    desc: "슬러시가 없다고 제보가 들어왔어요!",
+    desc: "현재 슬러시가 없다고 제보가 들어왔어요!",
     color: "text-slate-600 dark:text-slate-400",
     bg: "bg-slate-50 dark:bg-slate-900",
   },
@@ -137,7 +137,7 @@ function SlideTips() {
       <div className="space-y-2">
         <h3 className="text-lg font-bold">이제 준비 완료!</h3>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          슬러시가 품절된 걸 발견하면
+          슬러시가 비어있는 걸 발견하면
           <br />
           <span className="font-medium text-foreground">품절 제보하기</span>
           를 눌러 알려주세요.
@@ -194,7 +194,7 @@ export function WelcomeGuide({ externalOpen, onExternalOpenChange }: WelcomeGuid
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent showCloseButton={false} className="z-60">
         <DialogHeader>
           <DialogTitle className="sr-only">
             {SLIDES[step]!.title}
