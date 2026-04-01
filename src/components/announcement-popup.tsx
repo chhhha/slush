@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAnnouncements } from "@/hooks/use-announcements";
@@ -73,7 +72,7 @@ function AnnouncementDialog({ announcement }: AnnouncementDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
-      <DialogContent className="max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Megaphone className="size-5 text-primary" />
@@ -83,14 +82,14 @@ function AnnouncementDialog({ announcement }: AnnouncementDialogProps) {
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
           {announcement.content}
         </p>
-        <DialogFooter className="flex-col gap-2 sm:flex-row">
-          <Button variant="outline" size="sm" onClick={handleDismiss}>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1" onClick={handleDismiss}>
             이 공지 그만 보기
           </Button>
-          <Button size="sm" onClick={handleClose}>
+          <Button size="sm" className="flex-1" onClick={handleClose}>
             확인
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

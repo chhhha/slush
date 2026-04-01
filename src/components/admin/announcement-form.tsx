@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Pencil } from "lucide-react";
 import { INPUT_LIMITS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -17,8 +18,8 @@ interface AnnouncementFormProps {
 }
 
 /**
- * 관리자 공지 작성 폼 + 현재 활성 공지 표시/비활성화.
- * - 활성 공지가 있으면 내용 표시 + 비활성화 버튼
+ * 관리자 공지 작성 폼 + 현재 활성 공지 표시/수정/비활성화.
+ * - 활성 공지가 있으면 내용 표시 + 수정/비활성화 버튼
  * - Realtime 구독으로 상태 자동 갱신
  */
 export function AnnouncementForm({ adminName, apiBasePath = "/api/admin/announcements", onSuccess }: AnnouncementFormProps) {
@@ -26,11 +27,16 @@ export function AnnouncementForm({ adminName, apiBasePath = "/api/admin/announce
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeAnnouncement, setActiveAnnouncement] = useState<Announcement | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
   const supabaseRef = useRef(createClient());
 
   const maxLength = INPUT_LIMITS.ANNOUNCEMENT_MAX_LENGTH;
   const remaining = maxLength - content.length;
   const isOverLimit = remaining < 0;
+  const editRemaining = maxLength - editContent.length;
+  const isEditOverLimit = editRemaining < 0;
 
   const fetchActive = useCallback(async () => {
     try {
@@ -106,6 +112,7 @@ export function AnnouncementForm({ adminName, apiBasePath = "/api/admin/announce
       const json = await res.json();
       if (json.success) {
         toast.success("공지 팝업이 비활성화되었습니다");
+        setIsEditing(false);
       } else {
         toast.error(json.error ?? "비활성화에 실패했습니다");
       }
@@ -113,6 +120,46 @@ export function AnnouncementForm({ adminName, apiBasePath = "/api/admin/announce
       toast.error("네트워크 오류가 발생했습니다");
     } finally {
       setIsDeactivating(false);
+    }
+  };
+
+  const handleStartEdit = () => {
+    if (!activeAnnouncement) return;
+    setEditContent(activeAnnouncement.content);
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditContent("");
+  };
+
+  const handleUpdate = async () => {
+    if (!activeAnnouncement || !editContent.trim()) return;
+    if (isEditOverLimit) {
+      toast.error(`${maxLength}자 이내로 입력해주세요`);
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`${apiBasePath}/${activeAnnouncement.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: editContent.trim() }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast.success("공지가 수정되었습니다");
+        setIsEditing(false);
+        setEditContent("");
+      } else {
+        toast.error(json.error ?? "공지 수정에 실패했습니다");
+      }
+    } catch {
+      toast.error("네트워크 오류가 발생했습니다");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -125,19 +172,73 @@ export function AnnouncementForm({ adminName, apiBasePath = "/api/admin/announce
             <span className="text-xs font-medium text-primary">
               현재 활성 공지
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDeactivate}
-              disabled={isDeactivating}
-              className="h-7 text-xs text-destructive hover:text-destructive"
-            >
-              {isDeactivating ? "처리 중..." : "팝업 비활성화"}
-            </Button>
+            <div className="flex gap-1.5">
+              {!isEditing && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleStartEdit}
+                  className="h-7 text-xs"
+                >
+                  <Pencil className="mr-1 h-3 w-3" />
+                  수정
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDeactivate}
+                disabled={isDeactivating}
+                className="h-7 text-xs text-destructive hover:text-destructive"
+              >
+                {isDeactivating ? "처리 중..." : "팝업 비활성화"}
+              </Button>
+            </div>
           </div>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-            {activeAnnouncement.content}
-          </p>
+
+          {isEditing ? (
+            <div className="flex flex-col gap-1.5">
+              <Textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                rows={4}
+                className="resize-none"
+                maxLength={maxLength + 10}
+                autoFocus
+              />
+              <p
+                className={cn(
+                  "text-right text-xs tabular-nums",
+                  isEditOverLimit ? "text-destructive" : "text-muted-foreground"
+                )}
+              >
+                {editContent.length} / {maxLength}
+              </p>
+              <div className="flex justify-end gap-1.5">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancelEdit}
+                  disabled={isUpdating}
+                  className="h-7 text-xs"
+                >
+                  취소
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleUpdate}
+                  disabled={isUpdating || !editContent.trim() || isEditOverLimit}
+                  className="h-7 text-xs"
+                >
+                  {isUpdating ? "저장 중..." : "저장"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+              {activeAnnouncement.content}
+            </p>
+          )}
         </div>
       )}
 

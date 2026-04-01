@@ -41,6 +41,13 @@ export const announcementSchema = z.object({
   createdBy: z.string().min(1),
 });
 
+export const announcementUpdateSchema = z.object({
+  content: z
+    .string()
+    .min(1, "내용 입력 필요")
+    .max(INPUT_LIMITS.ANNOUNCEMENT_MAX_LENGTH),
+});
+
 export const emailRecipientSchema = z.object({
   email: z.string().email("올바른 이메일 주소를 입력해주세요"),
 });
