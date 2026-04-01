@@ -151,6 +151,25 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
         Relationships: [];
       };
+      faqs: {
+        Row: {
+          id: number;
+          question: string;
+          answer: string;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          question: string;
+          answer: string;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["faqs"]["Insert"]>;
+        Relationships: [];
+      };
       admin_allowed_names: {
         Row: {
           id: number;

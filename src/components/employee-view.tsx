@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { CupSoda, HelpCircle, Info, Wrench } from "lucide-react";
 import { useMachines } from "@/hooks/use-machines";
@@ -125,9 +125,20 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
   const [isWiggling, setIsWiggling] = useState(false);
   const [greeting, setGreeting] = useState("");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [collapsedFloors, setCollapsedFloors] = useState<Set<number>>(new Set());
+  const [animateFloors, setAnimateFloors] = useState(false);
+
+  // paint 전에 접힌 상태 적용 (펼쳐졌다 접히는 플래시 방지)
+  useLayoutEffect(() => {
+    try {
+      const saved = localStorage.getItem("slush-collapsed-floors");
+      if (saved) setCollapsedFloors(new Set(JSON.parse(saved)));
+    } catch {}
+  }, []);
 
   useEffect(() => {
     setGreeting(getGreeting());
+    requestAnimationFrame(() => setAnimateFloors(true));
   }, []);
 
   const handleLogoClick = useCallback(() => {
@@ -135,6 +146,18 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
     setTimeout(() => {
       window.location.reload();
     }, 400);
+  }, []);
+
+  const toggleFloor = useCallback((floor: number) => {
+    setCollapsedFloors((prev) => {
+      const next = new Set(prev);
+      if (next.has(floor)) next.delete(floor);
+      else next.add(floor);
+      try {
+        localStorage.setItem("slush-collapsed-floors", JSON.stringify([...next]));
+      } catch {}
+      return next;
+    });
   }, []);
 
   const getMachine = (floor: number, position: "left" | "right") =>
@@ -176,7 +199,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
                 <p className="font-semibold">DA사업부 S/W개발그룹</p>
                 <p>슬러시 이벤트 현황 페이지예요! 🍧</p>
                 <p className="text-muted-foreground">
-                  이 페이지는 100% AI가 개발했어요.
+                  이 페이지는 AI가 개발했어요.
                 </p>
                 <div className="border-t pt-2 text-xs text-muted-foreground">
                   <p>담당: 차재훈</p>
@@ -213,7 +236,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
           {FLOORS.map((floor, idx) => (
             <div
               key={floor}
-              className="animate-card-enter"
+              className={animateFloors ? "animate-card-enter" : "opacity-0"}
               style={
                 { "--enter-delay": `${idx * 120}ms` } as React.CSSProperties
               }
@@ -223,6 +246,9 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
                 leftMachine={getMachine(floor, "left")}
                 rightMachine={getMachine(floor, "right")}
                 onReportSoldOut={setReportTarget}
+                isCollapsed={collapsedFloors.has(floor)}
+                onToggleCollapse={() => toggleFloor(floor)}
+                animate={animateFloors}
               />
             </div>
           ))}

@@ -9,6 +9,7 @@ export type AbuseRecord =
   Database["public"]["Tables"]["abuse_records"]["Row"];
 export type BannedIdentifier =
   Database["public"]["Tables"]["banned_identifiers"]["Row"];
+export type Faq = Database["public"]["Tables"]["faqs"]["Row"];
 
 export type { MachineStatus, ChangerType };
 

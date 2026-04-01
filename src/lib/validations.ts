@@ -55,3 +55,15 @@ export const emailRecipientSchema = z.object({
 export const cleanSchema = z.object({
   adminName: z.string().min(1),
 });
+
+export const faqSchema = z.object({
+  question: z.string().min(1, "질문을 입력해주세요").max(200),
+  answer: z.string().min(1, "답변을 입력해주세요").max(1000),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const faqUpdateSchema = z.object({
+  question: z.string().min(1, "질문을 입력해주세요").max(200).optional(),
+  answer: z.string().min(1, "답변을 입력해주세요").max(1000).optional(),
+  sort_order: z.number().int().min(0).optional(),
+});

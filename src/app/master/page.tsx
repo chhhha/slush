@@ -27,6 +27,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { AnnouncementForm } from "@/components/admin/announcement-form";
+import { FaqManager } from "@/components/master/faq-manager";
 
 interface AllowedName {
   id: number;
@@ -468,6 +469,11 @@ export default function MasterPage() {
               adminName="마스터"
               apiBasePath="/api/master/announcements"
             />
+          </div>
+
+          {/* FAQ 관리 */}
+          <div className="rounded-lg border p-4">
+            <FaqManager />
           </div>
 
           {/* 모든 관리자 로그아웃 */}

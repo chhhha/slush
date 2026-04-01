@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle,
+  ChevronDown,
   Clock,
   Construction,
   Frown,
@@ -44,6 +45,9 @@ interface FloorMachineCardProps {
   leftMachine: Machine | undefined;
   rightMachine: Machine | undefined;
   onReportSoldOut: (machine: Machine) => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+  animate?: boolean;
 }
 
 /**
@@ -55,13 +59,17 @@ export function FloorMachineCard({
   leftMachine,
   rightMachine,
   onReportSoldOut,
+  isCollapsed = false,
+  onToggleCollapse,
+  animate = true,
 }: FloorMachineCardProps) {
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       {/* 층 헤더 */}
       <div
         className={cn(
-          "relative flex items-center border-b px-4 py-2.5 overflow-hidden",
+          "relative flex items-center px-4 py-2.5 overflow-hidden",
+          !isCollapsed && "border-b",
           floor === 4 && "bg-gradient-to-r from-sky-50/80 to-transparent dark:from-sky-950/40",
           floor === 3 && "bg-gradient-to-r from-cyan-50/80 to-transparent dark:from-cyan-950/40",
           floor === 2 && "bg-gradient-to-r from-blue-50/80 to-transparent dark:from-blue-950/40",
@@ -92,16 +100,32 @@ export function FloorMachineCard({
             floor === 2 && "bg-blue-300",
           )}
         />
-        <h3
-          className={cn(
-            "text-base font-semibold",
-            floor === 4 && "text-sky-600 dark:text-sky-400",
-            floor === 3 && "text-cyan-600 dark:text-cyan-400",
-            floor === 2 && "text-blue-600 dark:text-blue-400",
-          )}
+        <button
+          type="button"
+          className="flex items-center gap-1.5 cursor-pointer"
+          onClick={onToggleCollapse}
         >
-          {floor}층
-        </h3>
+          <ChevronDown
+            className={cn(
+              "size-4",
+              animate && "transition-transform duration-300",
+              floor === 4 && "text-sky-500 dark:text-sky-400",
+              floor === 3 && "text-cyan-500 dark:text-cyan-400",
+              floor === 2 && "text-blue-500 dark:text-blue-400",
+              isCollapsed && "-rotate-90",
+            )}
+          />
+          <h3
+            className={cn(
+              "text-base font-semibold",
+              floor === 4 && "text-sky-600 dark:text-sky-400",
+              floor === 3 && "text-cyan-600 dark:text-cyan-400",
+              floor === 2 && "text-blue-600 dark:text-blue-400",
+            )}
+          >
+            {floor}층
+          </h3>
+        </button>
         <span className="ml-auto">
           <Popover>
             <PopoverTrigger className={cn(
@@ -121,18 +145,34 @@ export function FloorMachineCard({
         </span>
       </div>
 
-      {/* 좌우 탱크 패널 */}
-      <div className="grid grid-cols-2 divide-x">
-        <TankPanel
-          machine={leftMachine}
-          floor={floor}
-          onReportSoldOut={onReportSoldOut}
-        />
-        <TankPanel
-          machine={rightMachine}
-          floor={floor}
-          onReportSoldOut={onReportSoldOut}
-        />
+      {/* 좌우 탱크 패널 (접기/펼치기 애니메이션) */}
+      <div
+        className={cn(
+          "grid",
+          animate && "transition-[grid-template-rows] duration-300 ease-in-out",
+          isCollapsed ? "grid-rows-[0fr]" : "grid-rows-[1fr]",
+        )}
+      >
+        <div
+          className={cn(
+            "overflow-hidden",
+            animate && "transition-opacity duration-200",
+            isCollapsed ? "opacity-0" : "opacity-100",
+          )}
+        >
+          <div className="grid grid-cols-2 divide-x">
+            <TankPanel
+              machine={leftMachine}
+              floor={floor}
+              onReportSoldOut={onReportSoldOut}
+            />
+            <TankPanel
+              machine={rightMachine}
+              floor={floor}
+              onReportSoldOut={onReportSoldOut}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
