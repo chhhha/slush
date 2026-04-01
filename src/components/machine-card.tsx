@@ -137,9 +137,9 @@ export function FloorMachineCard({
               <Info className="size-4" />
             </PopoverTrigger>
             <PopoverContent className="w-auto text-sm text-muted-foreground">
-              {floor === 4 && "DA1동 4층 A존 탕비실"}
-              {floor === 3 && "DA1동 3층 B존 제품S/W개발Lab 탕비실 (S/W 시험실 뒤쪽)"}
-              {floor === 2 && "DA1동 2층 C존 S/W Platform Lab 탕비실"}
+              {floor === 4 && "4층 A존 휴게실"}
+              {floor === 3 && "3층 B존 제품S/W개발Lab 휴게실 (S/W 시험실 뒤쪽)"}
+              {floor === 2 && "2층 C존 S/W Platform Lab 휴게실"}
             </PopoverContent>
           </Popover>
         </span>
