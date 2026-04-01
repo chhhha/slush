@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, ClipboardList, Settings, LogOut, CupSoda, Monitor } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Settings, LogOut, Monitor } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { toast } from "sonner";
@@ -26,8 +26,8 @@ export function AdminHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-5xl items-center px-4">
         <div className="flex flex-1 items-center">
-          <div className="mr-2 inline-flex items-center gap-1.5 text-sm sm:text-base tracking-tight">
-            <CupSoda className="size-4 text-primary" />
+          <div className="mr-2 inline-flex items-center gap-1.5 text-sm sm:text-base tracking-tight whitespace-nowrap">
+            <LayoutDashboard className="size-4 text-primary" />
             <Link href="/admin" className="font-bold text-primary hover:opacity-80 transition-opacity">
               관리자
             </Link>
@@ -39,13 +39,6 @@ export function AdminHeader() {
           </div>
         </div>
         <nav className="flex items-center gap-1 sm:gap-1.5">
-          <Link
-            href="/admin"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "flex items-center gap-1.5 min-h-11 min-w-11 sm:min-w-0 justify-center sm:justify-start")}
-          >
-            <LayoutDashboard className="size-4" />
-            <span className="hidden sm:inline">대시보드</span>
-          </Link>
           <Link
             href="/admin/logs"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "flex items-center gap-1.5 min-h-11 min-w-11 sm:min-w-0 justify-center sm:justify-start")}
