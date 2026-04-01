@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { CupSoda, Info, Settings } from "lucide-react";
+import { CupSoda, Info, Wrench } from "lucide-react";
 import { useMachines } from "@/hooks/use-machines";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 import { FloorMachineCard } from "@/components/machine-card";
@@ -155,7 +155,7 @@ export function EmployeeView({ initialMachines }: EmployeeViewProps) {
           </button>
           <div className="flex items-center gap-1">
             <Link href="/admin" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors">
-              <Settings className="size-5" />
+              <Wrench className="size-5" />
             </Link>
             <Popover>
               <PopoverTrigger

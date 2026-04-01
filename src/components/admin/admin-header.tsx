@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, ClipboardList, Settings, LogOut, Monitor } from "lucide-react";
+import { LayoutDashboard, History, Settings, LogOut, Monitor } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ export function AdminHeader() {
             href="/admin/logs"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "flex items-center gap-1.5 min-h-11 min-w-11 sm:min-w-0 justify-center sm:justify-start")}
           >
-            <ClipboardList className="size-4" />
+            <History className="size-4" />
             <span className="hidden sm:inline">로그</span>
           </Link>
           <Link
